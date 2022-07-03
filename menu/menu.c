@@ -246,7 +246,7 @@ int main(int argc, char *argv[ ]){
     move(0, menuWidth);
     vline(0, screenHeight);
     */
-    refresh( );
+    refresh( ); // 論理画面に変更がなかったとき、物理カーソルの位置を戻さないバグ？のた必要
     redrawChoice();
     // move(choiceY, 0);
     // wrefresh(menu);
@@ -267,7 +267,7 @@ int main(int argc, char *argv[ ]){
     refresh( );
     ch=getch( ); // キーボードから文字を入力する。
     // getyx(log, y, x); // カーソルの座標を取得する。
-    // getyx(stdscr, y, x); // カーソルの座標を取得する。
+    getyx(stdscr, y, x); // カーソルの座標を取得する。
     // wprintw(consoleWin, "ch=%d, x=%d, y=%d, w=%d, h=%d\n", ch, x, y, screenWidth, screenHeight); // curses版のprintf
     printf("ch=%d, x=%d, y=%d, w=%d, h=%d\r\n", ch, x, y, screenWidth, screenHeight); // curses版のprintf
     touchwin(stdscr);
