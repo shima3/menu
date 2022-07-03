@@ -1,7 +1,7 @@
 TARGETS=menu console
 
 all: $(TARGETS)
-	git commit -am "Successful compilation"
+	git commit -am "Successful compilation" --untracked-files=no
 
 menu: menu.c
 	cc menu.c -lncursesw -o menu
