@@ -46,6 +46,7 @@
 #include <stdio.h>
 #define __USE_XOPEN2KXSI
 #define __USE_XOPEN_EXTENDED
+#define __USE_XOPEN2K
 #include <stdlib.h>
 // #include <ncurses.h>
 #include <ncursesw/ncurses.h>
