@@ -263,8 +263,8 @@ int main(int argc, char *argv[ ]){
 
   // 端末の状態を変更する。
   ws=ws0;
-  ws.ws_col=ws0.ws_col-menuWidth;
-  ws.ws_row=ws0.ws_row-commandHeight;
+  ws.ws_col=consoleWidth;
+  ws.ws_row=consoleHeight;
   if(ioctl(STDOUT_FILENO, TIOCSWINSZ, &ws)) // ウィンドウサイズを設定する。
     perror("ioctl");
   /*
