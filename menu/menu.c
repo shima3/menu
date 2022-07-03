@@ -163,6 +163,7 @@ void loop(){
         case 0x5D: // OSC
           for(j=i+2; j<len; ++j){
             if(buf[j] == 0x07){
+              fputc(0x07, stdout);
               ++j;
               break;
             }
