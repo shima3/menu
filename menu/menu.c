@@ -257,8 +257,8 @@ int main(int argc, char *argv[ ]){
     KEY_F(n)		Value of function key n
     KEY_ENTER		enter/send key
   */
-  leaveok(stdscr, TRUE); // 物理カーソルの位置を元に戻さない。
-  // leaveok(stdscr, FALSE); // 物理カーソルの位置を元に戻す。
+  // leaveok(stdscr, TRUE); // 物理カーソルの位置を元に戻さない。
+  leaveok(stdscr, FALSE); // 物理カーソルの位置を元に戻す。
 
   start_color( ); // カラーを有効にする。
   pair_content(0, &foreground, &background);
