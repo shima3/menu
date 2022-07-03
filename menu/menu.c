@@ -218,6 +218,7 @@ int main(int argc, char *argv[ ]){
     perror("unlockpt");
   term=term0stdout;
   term.c_lflag &= ~ECHO; // エコーしない。
+  term.c_lflag = ONLCR;
   tcsetattr(fdm, TCSANOW, &term);
   printf("main 1\n");
   pid=fork( );
@@ -237,7 +238,7 @@ int main(int argc, char *argv[ ]){
     ws.ws_row=consoleHeight;
     if(ioctl(fds, TIOCSWINSZ, &ws)==-1) // ウィンドウサイズを設定する。
       perror("ioctl");
-    tcsetattr(fds, TCSANOW, &term0stdout);
+    tcsetattr(fds, TCSANOW, &term);
     dup2(fds, STDIN_FILENO);
     dup2(fds, STDOUT_FILENO);
     dup2(fds, STDERR_FILENO);
