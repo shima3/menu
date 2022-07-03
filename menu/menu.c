@@ -262,8 +262,10 @@ int main(int argc, char *argv[ ]){
 
     werase(commandWin);
     wmove(commandWin, 0, 0);
+    wattrset(commandWin, COLOR_PAIR(1));
     waddstr(commandWin, menuItems[choiceY].title);
-    wmove(commandWin, 1, 0);
+    waddch(commandWin, '\n');
+    wattrset(commandWin, 0);
     waddstr(commandWin, menuItems[choiceY].command);
     overwrite(commandWin, stdscr);
     /*
