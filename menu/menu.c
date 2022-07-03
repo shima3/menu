@@ -160,6 +160,7 @@ void loop(){
         waddch(consoleWin, buf[i+2]);
         waddch(consoleWin, buf[i+3]);
         waddch(consoleWin, buf[i+4]);
+        waddch(consoleWin, buf[i+5]);
         switch(buf[i+1]){
         case 0x20:
         case 0x26:
