@@ -202,11 +202,14 @@ int main(int argc, char *argv[ ]){
   ws.ws_row=consoleHeight;
   if(ioctl(STDOUT_FILENO, TIOCSWINSZ, &ws)) // ウィンドウサイズを設定する。
     perror("ioctl");
-  term=term0stdin;
   cfmakeraw(&term);
   tcsetattr(STDIN_FILENO, TCSANOW, &term);
   printf("\033c"); // ANSI reset command
   */
+  term=term0stdout;
+  term.c_lflag = ONLCR;
+  tcsetattr(STDOUT_FILENO, TCSANOW, &term);
+
   fdm=posix_openpt(O_RDWR); // 疑似端末を開く
   if(fdm<0){
     perror("posix_openpt");
@@ -218,7 +221,6 @@ int main(int argc, char *argv[ ]){
     perror("unlockpt");
   term=term0stdout;
   term.c_lflag &= ~ECHO; // エコーしない。
-  term.c_lflag = ONLCR;
   tcsetattr(fdm, TCSANOW, &term);
   printf("main 1\n");
   pid=fork( );
@@ -238,7 +240,7 @@ int main(int argc, char *argv[ ]){
     ws.ws_row=consoleHeight;
     if(ioctl(fds, TIOCSWINSZ, &ws)==-1) // ウィンドウサイズを設定する。
       perror("ioctl");
-    tcsetattr(fds, TCSANOW, &term);
+    // tcsetattr(fds, TCSANOW, &term);
     dup2(fds, STDIN_FILENO);
     dup2(fds, STDOUT_FILENO);
     dup2(fds, STDERR_FILENO);
