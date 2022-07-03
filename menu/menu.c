@@ -154,7 +154,7 @@ void loop(){
     if(len<=0) break;
     for(i=0; i<len; ++i){
       switch(buf[i]){
-      case 0x1B00:
+      case 0x1B:
         /*
         waddstr(consoleWin, "1B[");
         waddch(consoleWin, buf[i+1]);
@@ -196,6 +196,7 @@ void loop(){
         if(write(STDOUT_FILENO, buf+i, j-i)<=0) break;
         fsync(STDOUT_FILENO);
         */
+        wprintw(consoleWin, "(%d)", j-i);
         i=j-1;
         break;
       case 0x07:
