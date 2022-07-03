@@ -100,8 +100,8 @@ void redrawMenu(){
   // overwrite(menuPad, menuWin);
   for(i=0; i<screenHeight; ++i){
     wmove(menuWin, i, menuWidth/2);
-    waddch(menuWin, 160);
-    // waddstr(menuWin, "");
+    // waddch(menuWin, 160);
+    waddstr(menuWin, "\u1680");
   }
 
   int height=menuHeight-menuPadY;
