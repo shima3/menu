@@ -148,15 +148,15 @@ void loop(){
 
   buf[0]=13; // carriage return
   for(;;){
-    if(read(fdm, buf, sizeof(buf))!=1) break;
+    len=read(fdm, buf, sizeof(buf));
+    if(len<=0) break;
     waddstr(consoleWin, buf);
     overwrite(consoleWin, stdscr);
     touchwin(stdscr);
     /*
+    if(read(fdm, buf, sizeof(buf))!=1) break;
     if(buf[0]==10) write(STDOUT_FILENO, "\r", 1);
     if(write(STDOUT_FILENO, buf, 1)!=1) break;
-    len=read(fdm, buf, sizeof(buf));
-    if(len<=0) break;
     if(write(STDOUT_FILENO, buf, len)!=len) break;
     fsync(STDOUT_FILENO);
     */
