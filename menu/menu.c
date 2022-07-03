@@ -63,17 +63,20 @@ int menuWidth=20, menuHeight=0;
 int menuPadX=0, menuPadY=0;
 int commandWidth=0, commandHeight=3;
 MenuItem menuItems[ ]={
-  {"C --- コマンド ---", "C"},
+  {"T メニュー先頭", "", 'T'},
   {"L ファイル一覧", "ls", 'L'},
-  {" ファイル詳細一覧", "ls -l"},
-  {"  --- メニュー ---", ""},
-  {"ESC コマンド入力", ""},
-  {"RET コマンド実行", ""},
-  {"↓ 下に移動", ""},
-  {"↑ 上に移動", ""},
-  {"fn+↓ Page Down", ""},
-  {"fn+↑ Page Up", ""},
-  {"Q メニュー終了", ""},
+  {" ファイル詳細一覧", "ls -l", 0},
+  {"C 作業フォルダ変更", "cd <<フォルダ名>>", 'C'},
+  {" ホーム", "cd ~", 0},
+  {" 上のフォルダ", "cd ..", 'C'},
+  {"  --- メニュー ---", "", 0},
+  {"ESC コマンド入力", "", 0},
+  {"RET コマンド実行", "", 0},
+  {"↓ 下に移動", "", 0},
+  {"↑ 上に移動", "", 0},
+  {"fn+↓ Page Down", "", 0},
+  {"fn+↑ Page Up", "", 0},
+  {"Q メニュー終了", "", 0},
   {NULL, NULL}
 };
 int choiceY=0;
@@ -129,9 +132,9 @@ void redrawChoice(){
 }
 
 int main(int argc, char *argv[ ]){
-  int ch=0, x=0, y=0;
+  int ch=0, x=0, y=0, i;
   char str[1024];
-  short screenForeground, screenBackground;
+  short foreground, background;
 
   // setlocale(LC_ALL, "ja_JP.UTF-8"); // ロケールをja_JP.UTF-8に設定する。
   setlocale(LC_ALL, ""); // 環境変数に従ってロケールを設定する。
@@ -153,9 +156,9 @@ int main(int argc, char *argv[ ]){
   leaveok(stdscr, FALSE); // 物理カーソルの位置を元に戻す。
 
   start_color( ); // カラーを有効にする。
-  pair_content(0, &screenForeground, &screenBackground);
-  init_pair(1, screenBackground, screenForeground);
-  init_pair(2, screenForeground, screenBackground);
+  pair_content(0, &foreground, &background);
+  init_pair(1, background, foreground);
+  init_pair(2, foreground, background);
   /*
     bkgd(COLOR_PAIR(0));
   */
@@ -308,6 +311,13 @@ int main(int argc, char *argv[ ]){
       if(menuPadX<screenWidth-1) ++menuPadX;
       break;
       */
+    default:
+      for(i=0; i<menuHeight; ++i){
+        if(menuItems[i].shortcut==ch){
+          choiceY=i;
+          break;
+        }
+      }
     }
   }
   endwin( ); // 端末制御を終了する。
