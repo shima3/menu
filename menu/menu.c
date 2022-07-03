@@ -294,7 +294,7 @@ int main(int argc, char *argv[ ]){
     dup2(fds, STDERR_FILENO);
     close(fds);
     // ioctl(STDIN_FILENO, TIOCSCTTY, 1);
-    setenv("PS1", "\r\n$ ", 1);
+    // setenv("PS1", "\r\n$ ", 1);
     execvp(argv2[0], argv2);
     perror("execvp");
     return errno;
@@ -404,7 +404,7 @@ int main(int argc, char *argv[ ]){
 
   // write(fdm, "top\n", 4); fsync(fdm);
   // strcpy(buf, "nano makefile\n"); write(fdm, buf, strlen(buf)); fsync(fdm);
-  strcpy(buf, "export PS1=\"\\r$ \"\n"); write(fdm, buf, strlen(buf)); fsync(fdm);
+  strcpy(buf, "export PS1=\"\\r$ \"\n"); write(fdm, buf, strlen(buf));
   strcpy(buf, "echo $PS1\n"); write(fdm, buf, strlen(buf)); fsync(fdm);
   for(;;){
     // write(fdm, "\r", 1); fsync(fdm);
