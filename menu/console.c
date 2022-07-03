@@ -165,7 +165,7 @@ int main(){
     if(ioctl(fds, TIOCSWINSZ, &ws2)) // ウィンドウサイズを設定する。
       perror("ioctl");
     close(fds);
-    ioctl(STDIN_FILENO, TIOCSCTTY, 1);
+    // ioctl(STDIN_FILENO, TIOCSCTTY, 1);
     execvp(argv2[0], argv2);
     fprintf(stderr, "main 3\n");
     perror("exec error");

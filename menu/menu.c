@@ -44,6 +44,8 @@
   -- ユーザがエスケープキーを押すと、メニューモードとコンソールモードが切り替わる。
 */
 #include <stdio.h>
+#define __USE_XOPEN2KXSI
+#define __USE_XOPEN_EXTENDED
 #include <stdlib.h>
 // #include <ncurses.h>
 #include <ncursesw/ncurses.h>
@@ -53,6 +55,10 @@
 #define __USE_MISC
 #include <termios.h>
 #include <sys/ioctl.h>	/* 44BSD requires this too */
+#include <fcntl.h>
+#include <string.h>
+#include <errno.h>
+#include <pthread.h>
 
 typedef struct{
   char *title;
@@ -82,6 +88,8 @@ MenuItem menuItems[ ]={
   {NULL, NULL}
 };
 int choiceY=0;
+int childDie=FALSE;
+int fdm, fds;
 
 void makeMenuPad(){
   int i;
@@ -133,12 +141,91 @@ void redrawChoice(){
   overwrite(choiceWin, stdscr);
 }
 
+void loop(){
+  char buf[1024];
+  int len;
+
+  for(;;){
+    len=read(fdm, buf, sizeof(buf));
+    if(len<=0) break;
+    if(write(STDOUT_FILENO, buf, len)!=len) break;
+    fsync(STDOUT_FILENO);
+  }
+  childDie=TRUE;
+}
+
 int main(int argc, char *argv[ ]){
   int ch=0, x=0, y=0, i;
-  char str[1024];
+  char buf[1024];
   short foreground, background;
   struct winsize ws0, ws;
   struct termios term, term0stdin, term0stdout, term0stderr;
+  char *argv2[]={
+    //    "/usr/local/bin/bash",
+    "/bin/bash",
+    "-i",
+    NULL
+  };
+  int pid;
+  pthread_t thread;
+
+  // 端末の状態を保存する。
+  if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws0)!=-1)
+    wprintw(commandWin, "(%d, %d)\n", ws0.ws_col, ws0.ws_row);  // (幅, 高さ)
+  else perror("ioctl");
+  tcgetattr(STDIN_FILENO, &term0stdin);
+  tcgetattr(STDOUT_FILENO, &term0stdout);
+  tcgetattr(STDERR_FILENO, &term0stderr);
+
+  // 端末の状態を変更する。
+  /*
+  ws=ws0;
+  ws.ws_col=consoleWidth;
+  ws.ws_row=consoleHeight;
+  if(ioctl(STDOUT_FILENO, TIOCSWINSZ, &ws)) // ウィンドウサイズを設定する。
+    perror("ioctl");
+  term=term0stdin;
+  cfmakeraw(&term);
+  tcsetattr(STDIN_FILENO, TCSANOW, &term);
+  printf("\033c"); // ANSI reset command
+  */
+  fdm=posix_openpt(O_RDWR); // 疑似端末を開く
+  if(fdm<0){
+    perror("posix_openpt");
+    exit(1);
+  }
+  if(grantpt(fdm)!=0) // 疑似端末スレーブをアクセス可能にする
+    perror("grantpt");
+  if(unlockpt(fdm)!=0) // 疑似端末の内部的なロックを解除する。
+    perror("unlockpt");
+  pid=fork( );
+  if(pid==0){ // child
+    strcpy(buf, ptsname(fdm));
+    close(fdm);
+    printf("slave %s\r\n", buf);
+    fds=open(buf, O_RDWR);
+    if(fds<0){
+      perror("Error: open slave PTY");
+      exit(1);
+    }
+    if(setsid( )<0) // 警告（Inappropriate ioctl for device）を避けるため
+      perror("setsid");
+    ws=ws0;
+    ws.ws_col=consoleWidth;
+    ws.ws_row=consoleHeight;
+    if(ioctl(fds, TIOCSWINSZ, &ws)==-1) // ウィンドウサイズを設定する。
+      perror("ioctl");
+    dup2(fds, STDIN_FILENO);
+    dup2(fds, STDOUT_FILENO);
+    dup2(fds, STDERR_FILENO);
+    close(fds);
+    // ioctl(STDIN_FILENO, TIOCSCTTY, 1);
+    execvp(argv2[0], argv2);
+    perror("execvp");
+    return errno;
+  }
+  // parent
+  pthread_create(&thread, NULL, (void*(*)(void*))loop, NULL);
 
   // setlocale(LC_ALL, "ja_JP.UTF-8"); // ロケールをja_JP.UTF-8に設定する。
   setlocale(LC_ALL, ""); // 環境変数に従ってロケールを設定する。
@@ -251,27 +338,6 @@ int main(int argc, char *argv[ ]){
   wmove(menuframe, menuHeight, 0);
   waddch(menuframe, ACS_LLCORNER);
   whline(menuframe, 0, menuWidth);
-  */
-
-  // 端末の状態を保存する。
-  if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws0)!=-1)
-    wprintw(commandWin, "(%d, %d)\n", ws0.ws_col, ws0.ws_row);  // (幅, 高さ)
-  else perror("ioctl");
-  tcgetattr(STDIN_FILENO, &term0stdin);
-  tcgetattr(STDOUT_FILENO, &term0stdout);
-  tcgetattr(STDERR_FILENO, &term0stderr);
-
-  // 端末の状態を変更する。
-  /*
-  ws=ws0;
-  ws.ws_col=consoleWidth;
-  ws.ws_row=consoleHeight;
-  if(ioctl(STDOUT_FILENO, TIOCSWINSZ, &ws)) // ウィンドウサイズを設定する。
-    perror("ioctl");
-  term=term0stdin;
-  cfmakeraw(&term);
-  tcsetattr(STDIN_FILENO, TCSANOW, &term);
-  printf("\033c"); // ANSI reset command
   */
   
   for(;;){
