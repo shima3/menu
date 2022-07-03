@@ -153,7 +153,7 @@ void loop(){
     len=read(fdm, buf, sizeof(buf));
     if(len<=0) break;
     for(i=0; i<len; ++i){
-      if(buf[i]==0x1B){
+      if(buf[i]==0x1B00){
         switch(buf[i+1]){
         case 0x20:
         case 0x26:
