@@ -103,7 +103,7 @@ void redrawMenu(){
     waddstr(menuWin, "");
   }
   wmove(menuWin, screenHeight-1, menuWidth/2);
-  waddch(menuWin, 32);
+  waddch(menuWin, 133);
   // waddstr(menuWin, ".");
 
   int height=menuHeight-menuPadY;
