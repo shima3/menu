@@ -413,7 +413,7 @@ int main(int argc, char *argv[ ]){
     consoleHeight=screenHeight-commandHeight;
     // wresize(consoleWin, consoleHeight, consoleWidth);
     redrawMenu();
-    // overwrite(consoleWin, stdscr);
+    overwrite(consoleWin, stdscr);
 
     werase(commandWin);
     wmove(commandWin, 0, 0);
