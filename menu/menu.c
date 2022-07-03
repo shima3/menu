@@ -253,15 +253,24 @@ int main(int argc, char *argv[ ]){
   whline(menuframe, 0, menuWidth);
   */
 
+  // 端末の状態を保存する。
   if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws0)!=-1)
     printf("(%d, %d)\n", ws0.ws_col, ws0.ws_row);  // (幅, 高さ)
   else perror("ioctl");
   tcgetattr(STDIN_FILENO, &term0stdin);
   tcgetattr(STDOUT_FILENO, &term0stdout);
   tcgetattr(STDERR_FILENO, &term0stderr);
+
+  // 端末の状態を変更する。
+  ws=ws0;
+  ws.ws_col=ws0.ws_col-menuWidth;
+  ws.ws_row=ws0.ws_row-commandHeight;
+  if(ioctl(STDOUT_FILENO, TIOCSWINSZ, &ws)) // ウィンドウサイズを設定する。
+    perror("ioctl");
   term=term0stdin;
   cfmakeraw(&term);
   tcsetattr(STDIN_FILENO, TCSANOW, &term);
+  printf("\033c"); // ANSI reset command
   
   for(;;){
     getmaxyx(stdscr, screenHeight, screenWidth); // スクリーンサイズを取得する。
