@@ -155,6 +155,7 @@ void loop(){
     for(i=0; i<len; ++i){
       switch(buf[i]){
       case 0x1B:
+        waddstr(consoleWin, "^[");
         switch(buf[i+1]){
         case 0x20:
         case 0x26:
@@ -163,7 +164,6 @@ void loop(){
         case 0x5D: // OSC
           for(j=i+2; j<len; ++j){
             if(buf[j] == 0x07){
-              waddstr(consoleWin, "^G");
               ++j;
               break;
             }
