@@ -51,8 +51,9 @@
 #include <unistd.h>
 
 int screenWidth, screenHeight;
-int menuWidth=19, menuHeight=0;
 WINDOW *menuPad, *menuWin, *consoleWin, *choiceWin;
+int consoleWidth, consoleHeight;
+int menuWidth=19, menuHeight=0;
 int menuPadX=0, menuPadY=0;
 char *menuItems[ ]={
   "ESC コマンド入力",
@@ -64,7 +65,6 @@ char *menuItems[ ]={
   "Q 終了",
   NULL
 };
-int consoleWidth;
 int choiceY=0;
 
 void makeMenuPad(){
@@ -100,7 +100,7 @@ void redrawMenu(){
   // overwrite(menuPad, menuWin);
   for(i=0; i<screenHeight; ++i){
     wmove(menuWin, i, menuWidth/2);
-    waddstr(menuWin, "\u200B");
+    waddstr(menuWin, "\u200B"); // ZERO WIDTH SPACE
   }
 
   int height=menuHeight-menuPadY;
@@ -187,8 +187,9 @@ int main(int argc, char *argv[ ]){
      指定したウィンドウと文字列バッファを共有する。*/
   // consoleWidth=screenWidth-menuWidth-1;
   consoleWidth=screenWidth-menuWidth;
+  consoleHeight=screenHeight-3;
   // consoleWin=newwin(screenHeight, consoleWidth, 0, menuWidth+1); // ウィンドウを作成する 。
-  consoleWin=newwin(screenHeight, consoleWidth, 0, 0); // ウィンドウを作成する 。
+  consoleWin=newwin(consoleHeight, consoleWidth, 0, 0); // ウィンドウを作成する 。
   // menu=subwin(stdscr, 10, 20, 10, 10); // ウィンドウを作成する。
   // log=newwin(screenHeight, screenWidth, 0, 0); // ウィンドウを作成する。
   if(consoleWin==NULL){
@@ -225,8 +226,10 @@ int main(int argc, char *argv[ ]){
   for(;;){
     getmaxyx(stdscr, screenHeight, screenWidth); // スクリーンサイズを取得する。
     wresize(menuWin, screenHeight, menuWidth); // ウィンドウのサイズを変更する。
-    consoleWidth=screenWidth-menuWidth-1;
-    wresize(consoleWin, screenHeight, consoleWidth);
+    // consoleWidth=screenWidth-menuWidth-1;
+    consoleWidth=screenWidth-menuWidth;
+    consoleHeight=screenHeight-3;
+    wresize(consoleWin, consoleHeight, consoleWidth);
     // if(menuHeight<screenHeight) redrawMenu();
     redrawMenu();
     overwrite(consoleWin, stdscr);
