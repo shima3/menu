@@ -209,13 +209,14 @@ int main(int argc, char *argv[ ]){
 
   // choiceWin=newwin(1, screenWidth, choiceY, 0);
   // choiceWin=newwin(1, menuWidth, choiceY, 0);
-  choiceWin=newwin(1, menuWidth-1, choiceY, 0);
+  choiceWin=newwin(1, menuWidth, choiceY, 0);
   if(choiceWin==NULL){
     fprintf(stderr, "Failed to create a choice window.\n");
     exit(1);
   }
   // wbkgd(choiceWin, COLOR_PAIR(1));
   wbkgd(choiceWin, COLOR_PAIR(2));
+  leaveok(choiceWin, FALSE); // 物理カーソルの位置を元に戻す。
   
   // menuframe=newwin(menuHeight+1, menuWidth+1, 0, screenWidth-menuWidth-1); // ウィンドウを作成する。
   // wcolor_set(menuframe, COLOR_PAIR(1), NULL);
