@@ -231,9 +231,11 @@ int main(int argc, char *argv[ ]){
     perror("grantpt");
   if(unlockpt(fdm)!=0) // 疑似端末の内部的なロックを解除する。
     perror("unlockpt");
+  /*
   term=term0stdout;
   term.c_lflag &= ~ECHO; // エコーしない。
   tcsetattr(fdm, TCSANOW, &term);
+  */
   printf("main 1\n");
   pid=fork( );
   if(pid==0){ // child
