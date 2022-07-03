@@ -238,6 +238,7 @@ int main(int argc, char *argv[ ]){
     dup2(fds, STDERR_FILENO);
     close(fds);
     // ioctl(STDIN_FILENO, TIOCSCTTY, 1);
+    setenv("PS1", "\r\n$ ", 1);
     execvp(argv2[0], argv2);
     perror("execvp");
     return errno;
