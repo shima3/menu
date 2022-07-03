@@ -199,6 +199,7 @@ int main(int argc, char *argv[ ]){
   if(unlockpt(fdm)!=0) // 疑似端末の内部的なロックを解除する。
     perror("unlockpt");
   pid=fork( );
+  printf("main 1\n");
   if(pid==0){ // child
     strcpy(buf, ptsname(fdm));
     close(fdm);
@@ -224,8 +225,10 @@ int main(int argc, char *argv[ ]){
     perror("execvp");
     return errno;
   }
+  printf("main 2\n");
   // parent
   pthread_create(&thread, NULL, (void*(*)(void*))loop, NULL);
+  printf("main 3\n");
 
   // setlocale(LC_ALL, "ja_JP.UTF-8"); // ロケールをja_JP.UTF-8に設定する。
   setlocale(LC_ALL, ""); // 環境変数に従ってロケールを設定する。
