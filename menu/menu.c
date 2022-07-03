@@ -284,8 +284,10 @@ int main(int argc, char *argv[ ]){
     }
   }
   endwin( ); // 端末制御を終了する。
+  /*
   printf("%d x %d\n", screenWidth, screenHeight);
   printf("前景 %d, 背景 %d\n", screenForeground, screenBackground);
   printf("menuWin=%lx\n", (long)menuWin);
+  */
   return 0;
 }

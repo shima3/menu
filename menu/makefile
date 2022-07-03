@@ -6,7 +6,7 @@ all: $(TARGETS)
 	git commit -am "Successful compilation" --untracked-files=no
 
 menu: menu.c
-	cc menu.c -lncursesw -o menu
+	cc -std=c99 menu.c -lncursesw -o menu
 #	cc menu.c -lcurses -o menu
 
 console: console.c
