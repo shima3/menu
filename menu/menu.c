@@ -56,10 +56,11 @@ typedef struct{
 } MenuItem;
 
 int screenWidth, screenHeight;
-WINDOW *menuPad, *menuWin, *consoleWin, *choiceWin;
-int consoleWidth, consoleHeight;
+WINDOW *menuPad, *menuWin, *consoleWin, *choiceWin, *commandWin;
+int consoleWidth=0, consoleHeight=0;
 int menuWidth=20, menuHeight=0;
 int menuPadX=0, menuPadY=0;
+int commandWidth=0, commandHeight=3;
 MenuItem menuItems[ ]={
   {"L ファイル一覧", "ls"},
   {"ESC コマンド入力", ""},
@@ -195,7 +196,7 @@ int main(int argc, char *argv[ ]){
      指定したウィンドウと文字列バッファを共有する。*/
   // consoleWidth=screenWidth-menuWidth-1;
   consoleWidth=screenWidth-menuWidth;
-  consoleHeight=screenHeight-3;
+  consoleHeight=screenHeight-commandHeight;
   // consoleWin=newwin(screenHeight, consoleWidth, 0, menuWidth+1); // ウィンドウを作成する 。
   consoleWin=newwin(consoleHeight, consoleWidth, 0, 0); // ウィンドウを作成する 。
   // menu=subwin(stdscr, 10, 20, 10, 10); // ウィンドウを作成する。
@@ -208,6 +209,14 @@ int main(int argc, char *argv[ ]){
   scrollok(consoleWin, TRUE); // スクロールできるように設定する。
   // wprintw(logWin, "ログ\n");
 
+  commandWidth=screenWidth-menuWidth;
+  commandWin=subwin(stdscr, commandHeight, commandWidth, consoleHeight, 0);
+  if(commandWin==NULL){
+    fprintf(stderr, "Failed to create a command window.\n");
+    exit(1);
+  }
+  wbkgd(commandWin, COLOR_PAIR(1));
+
   // choiceWin=newwin(1, screenWidth, choiceY, 0);
   // choiceWin=newwin(1, menuWidth, choiceY, 0);
   choiceWin=newwin(1, menuWidth, choiceY, 0);
@@ -218,7 +227,7 @@ int main(int argc, char *argv[ ]){
   // wbkgd(choiceWin, COLOR_PAIR(1));
   wbkgd(choiceWin, COLOR_PAIR(2));
   leaveok(choiceWin, FALSE); // 物理カーソルの位置を元に戻す。
-  
+
   // menuframe=newwin(menuHeight+1, menuWidth+1, 0, screenWidth-menuWidth-1); // ウィンドウを作成する。
   // wcolor_set(menuframe, COLOR_PAIR(1), NULL);
   // wcolor_set(menuframe, 1, NULL);
@@ -238,7 +247,7 @@ int main(int argc, char *argv[ ]){
     wresize(menuWin, screenHeight, menuWidth); // ウィンドウのサイズを変更する。
     // consoleWidth=screenWidth-menuWidth-1;
     consoleWidth=screenWidth-menuWidth;
-    consoleHeight=screenHeight-3;
+    consoleHeight=screenHeight-commandHeight;
     wresize(consoleWin, consoleHeight, consoleWidth);
     // if(menuHeight<screenHeight) redrawMenu();
     redrawMenu();
