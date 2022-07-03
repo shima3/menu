@@ -211,7 +211,8 @@ int main(int argc, char *argv[ ]){
   if(unlockpt(fdm)!=0) // 疑似端末の内部的なロックを解除する。
     perror("unlockpt");
   printf("main 1\n");
-  pid=fork( );
+  // pid=fork( );
+  pid=1;
   if(pid==0){ // child
     strcpy(buf, ptsname(fdm));
     close(fdm);
