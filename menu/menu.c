@@ -279,7 +279,7 @@ int main(int argc, char *argv[ ]){
   // menuHeight=screenHeight;
   // menuWin=subwin(stdscr, screenHeight, menuWidth, 0, 0);
   printf("%d %d %d %d\n", screenHeight, menuWidth, screenWidth, menuWidth);
-  menuWin=subwin(stdscr, screenHeight, menuWidth-1, 0, screenWidth-menuWidth);
+  menuWin=subwin(stdscr, screenHeight, menuWidth, 0, screenWidth-menuWidth);
   // menu=newwin(menuHeight, menuWidth, 0, screenWidth-menuWidth-1);
   if(menuWin==NULL){
     fprintf(stderr, "Failed to create a menu window.\n");
@@ -314,7 +314,7 @@ int main(int argc, char *argv[ ]){
   // wprintw(logWin, "ログ\n");
 
   commandWidth=screenWidth-menuWidth;
-  commandWin=subwin(stdscr, commandHeight, commandWidth-1, consoleHeight, 0);
+  commandWin=subwin(stdscr, commandHeight, commandWidth, consoleHeight, 0);
   if(commandWin==NULL){
     fprintf(stderr, "Failed to create a command window.\n");
     exit(1);
