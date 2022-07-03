@@ -410,6 +410,7 @@ int main(int argc, char *argv[ ]){
       */
     case '\n':
       strcpy(buf, menuItems[choiceY].command);
+      strcat(buf, "\n");
       write(fdm, buf, strlen(buf));
       fsync(fdm);
       break;
