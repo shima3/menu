@@ -100,7 +100,8 @@ void redrawMenu(){
   // overwrite(menuPad, menuWin);
   for(i=0; i<screenHeight; ++i){
     wmove(menuWin, i, menuWidth/2);
-    waddch(menuWin, 0xFEFF);
+    waddch(menuWin, 0xFE);
+    waddch(menuWin, 0xFF);
     // waddstr(menuWin, "\u200B");
   }
 
