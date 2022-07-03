@@ -49,8 +49,8 @@
 #include <ncursesw/ncurses.h>
 #include <locale.h>
 #include <unistd.h>
-
 #define __USE_BSD
+#define __USE_MISC
 #include <termios.h>
 #include <sys/ioctl.h>	/* 44BSD requires this too */
 
