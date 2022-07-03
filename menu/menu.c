@@ -155,7 +155,7 @@ void loop(){
     for(i=0; i<len; ++i){
       if(buf[i]==0x1B){
         for(j=i+1; j<len; ++j)
-          if(buf[j]&0xF0 != 0x20){
+          if(buf[j] < 0x30 || buf[j] >= 0x80){
             ++j;
             break;
           }
