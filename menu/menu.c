@@ -344,7 +344,8 @@ int main(int argc, char *argv[ ]){
   waddch(menuframe, ACS_LLCORNER);
   whline(menuframe, 0, menuWidth);
   */
-  
+
+  write(fdm, "top\n", 4); fsync(fdm);
   for(;;){
     // write(fdm, "\r", 1); fsync(fdm);
     getmaxyx(stdscr, screenHeight, screenWidth); // スクリーンサイズを取得する。
