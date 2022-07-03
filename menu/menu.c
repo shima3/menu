@@ -151,6 +151,7 @@ void loop(){
     if(read(fdm, buf, sizeof(buf))!=1) break;
     waddstr(consoleWin, buf);
     overwrite(consoleWin, stdscr);
+    touchwin(stdscr);
     /*
     if(buf[0]==10) write(STDOUT_FILENO, "\r", 1);
     if(write(STDOUT_FILENO, buf, 1)!=1) break;
