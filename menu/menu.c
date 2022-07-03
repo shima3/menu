@@ -145,6 +145,7 @@ int main(int argc, char *argv[ ]){
   start_color( ); // カラーを有効にする。
   pair_content(0, &screenForeground, &screenBackground);
   init_pair(1, screenBackground, screenForeground);
+  init_pair(2, screenForeground, screenBackground);
   /*
     bkgd(COLOR_PAIR(0));
   */
