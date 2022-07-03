@@ -403,6 +403,8 @@ int main(int argc, char *argv[ ]){
       if(menuPadX<screenWidth-1) ++menuPadX;
       break;
       */
+    case '\r':
+      printf("return\n");
     case KEY_ENTER:
       strcpy(buf, menuItems[choiceY].command);
       write(fdm, buf, strlen(buf));
