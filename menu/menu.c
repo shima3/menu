@@ -171,7 +171,7 @@ void loop(){
           for(; j<len; ++j)
             if(buf[j] < '0' || buf[j] > '9') break;
           if(buf[j++] != ';') break;
-          for(j=i+2; j<len; ++j)
+          for(; j<len; ++j)
             if(buf[j] < '0' || buf[j] > '9') break;
           ++j;
           break;
