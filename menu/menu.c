@@ -81,8 +81,9 @@ void makeMenuPad(){
 
 void redrawMenu(){
   int i;
-  /*
+
   werase(menuWin);
+  /*
   wmove(menuWin, 0, 0);
   for(int i=0; menuItems[i]!=NULL; ++i){
     waddchstr(menuWin, menuItems[i]);
