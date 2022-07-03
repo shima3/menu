@@ -252,11 +252,16 @@ int main(int argc, char *argv[ ]){
     // if(menuHeight<screenHeight) redrawMenu();
     redrawMenu();
     overwrite(consoleWin, stdscr);
+
+    werase(commandWin);
+    wmove(commandWin, 0, 0);
+    waddstr(commandWin, menuItems[choiceY].title);
+    overwrite(commandWin, stdscr);
     /*
     move(0, menuWidth);
     vline(0, screenHeight);
     */
-    refresh( ); // 論理画面に変更がなかったとき、物理カーソルの位置を戻さないバグ？のた必要
+    refresh( ); // 論理画面に変更がなかったとき、物理カーソルの位置を戻らないバグ？のた必要
     redrawChoice();
     // move(choiceY, 0);
     // wrefresh(menu);
