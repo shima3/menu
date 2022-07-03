@@ -155,6 +155,7 @@ void loop(){
     for(i=0; i<len; ++i){
       switch(buf[i]){
       case 0x1B:
+        wprintw(consoleWin, "(%x)", buf[i+1]);
         switch(buf[i+1]){
         case 0x20:
         case 0x26:
