@@ -157,7 +157,8 @@ int main(int argc, char *argv[ ]){
      lines行，cols列の新しいウィンドウを指定したウィンドウのy行，x列目に作成します．
      x, y は画面stdscrの絶対座標 */
   // menuHeight=screenHeight;
-  menuWin=subwin(stdscr, screenHeight, menuWidth, 0, 0);
+  // menuWin=subwin(stdscr, screenHeight, menuWidth, 0, 0);
+  menuWin=subwin(stdscr, screenHeight, menuWidth, 0, screenWidth-menuWidth);
   // menu=newwin(menuHeight, menuWidth, 0, screenWidth-menuWidth-1);
   if(menuWin==NULL){
     fprintf(stderr, "Failed to create a menu window.\n");
@@ -175,8 +176,10 @@ int main(int argc, char *argv[ ]){
   /* WINDOW *subwin(WINDOW *orig, int nlines, int ncols, int y, int x);
      nlines行，ncols列の新しいウィンドウをスクリーンのy行，x列目に作成する。
      指定したウィンドウと文字列バッファを共有する。*/
-  consoleWidth=screenWidth-menuWidth-1;
-  consoleWin=newwin(screenHeight, consoleWidth, 0, menuWidth+1); // ウィンドウを作成する 。
+  // consoleWidth=screenWidth-menuWidth-1;
+  consoleWidth=screenWidth-menuWidth;
+  // consoleWin=newwin(screenHeight, consoleWidth, 0, menuWidth+1); // ウィンドウを作成する 。
+  consoleWin=newwin(screenHeight, consoleWidth, 0, 0); // ウィンドウを作成する 。
   // menu=subwin(stdscr, 10, 20, 10, 10); // ウィンドウを作成する。
   // log=newwin(screenHeight, screenWidth, 0, 0); // ウィンドウを作成する。
   if(consoleWin==NULL){
