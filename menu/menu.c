@@ -231,10 +231,8 @@ int main(int argc, char *argv[ ]){
     ws=ws0;
     ws.ws_col=consoleWidth;
     ws.ws_row=consoleHeight;
-    /*
     if(ioctl(fds, TIOCSWINSZ, &ws)==-1) // ウィンドウサイズを設定する。
       perror("ioctl");
-    */
     dup2(fds, STDIN_FILENO);
     dup2(fds, STDOUT_FILENO);
     dup2(fds, STDERR_FILENO);
