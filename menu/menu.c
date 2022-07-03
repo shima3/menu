@@ -17,6 +17,8 @@
   http://linuxmag.osdn.jp/Japanese/March2002/article233.shtml
   - man pages section 3: Curses Library Functions
   https://docs.oracle.com/cd/E86824_01/html/E54767/copywin-3curses.html
+  - JIS X 0202:1998 (ISO/IEC 2022:1994)
+  https://kikakurui.com/x0/X0202-1998-01.html
   
   Bugs:
   - 背景色を変更したウィンドウが右端にあると左側のウィンドウの空行も同じ背景色になる。
@@ -144,20 +146,28 @@ void redrawChoice(){
 
 void loop(){
   char buf[256];
-  int len;
+  int len, i, j;
 
   buf[0]=13; // carriage return
   for(;;){
     len=read(fdm, buf, sizeof(buf));
     if(len<=0) break;
-    buf[len]=0;
-    waddstr(consoleWin, buf);
-    overwrite(consoleWin, stdscr);
-    touchwin(stdscr);
+    for(i=0; i<len; ++i){
+      if(buf[i]==0x1B){
+        for(j=i+1; j<len; ++j)
+          if(buf[j]&0xF0 != 0x20) break;
+        if(write(STDOUT_FILENO, buf+i, j-i)<=0) break;
+        fsync(STDOUT_FILENO);
+      }else{
+        waddch(consoleWin, buf[i]);
+        overwrite(consoleWin, stdscr);
+        touchwin(stdscr);
+        refresh();
+      }
+    }
     /*
     if(read(fdm, buf, sizeof(buf))!=1) break;
     if(buf[0]==10) write(STDOUT_FILENO, "\r", 1);
-    if(write(STDOUT_FILENO, buf, 1)!=1) break;
     if(write(STDOUT_FILENO, buf, len)!=len) break;
     fsync(STDOUT_FILENO);
     */
