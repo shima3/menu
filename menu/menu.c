@@ -267,9 +267,11 @@ int main(int argc, char *argv[ ]){
   ws.ws_row=ws0.ws_row-commandHeight;
   if(ioctl(STDOUT_FILENO, TIOCSWINSZ, &ws)) // ウィンドウサイズを設定する。
     perror("ioctl");
+  /*
   term=term0stdin;
   cfmakeraw(&term);
   tcsetattr(STDIN_FILENO, TCSANOW, &term);
+  */
   printf("\033c"); // ANSI reset command
   
   for(;;){
