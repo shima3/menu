@@ -98,7 +98,8 @@ void redrawMenu(){
   // overlay(menuPad, menuWin);
   // overwrite(menuPad, menuWin);
   for(i=0; i<screenHeight; ++i){
-    wmove(menuWin, i, screenWidth-menuWidth);
+    if(wmove(menuWin, i, screenWidth-menuWidth)==ERR)
+      perror("wmove");
     waddstr(menuWin, ":");
   }
 
