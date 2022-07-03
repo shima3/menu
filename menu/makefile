@@ -1,4 +1,5 @@
 .PHONY: all
+.IGNORE: all
 
 TARGETS=menu console
 
