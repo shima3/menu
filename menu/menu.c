@@ -177,6 +177,7 @@ int main(int argc, char *argv[ ]){
   tcgetattr(STDOUT_FILENO, &term0stdout);
   tcgetattr(STDERR_FILENO, &term0stderr);
 
+  printf("main 3\n");
   // 端末の状態を変更する。
   /*
   ws=ws0;
@@ -228,7 +229,6 @@ int main(int argc, char *argv[ ]){
   printf("main 2\n");
   // parent
   pthread_create(&thread, NULL, (void*(*)(void*))loop, NULL);
-  printf("main 3\n");
 
   // setlocale(LC_ALL, "ja_JP.UTF-8"); // ロケールをja_JP.UTF-8に設定する。
   setlocale(LC_ALL, ""); // 環境変数に従ってロケールを設定する。
