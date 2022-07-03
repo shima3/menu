@@ -192,13 +192,17 @@ void loop(){
         default:
           j=i+4;
         }
+        /*
         if(write(STDOUT_FILENO, buf+i, j-i)<=0) break;
         fsync(STDOUT_FILENO);
+        */
         i=j-1;
         break;
       case 0x07:
+        /*
         if(write(STDOUT_FILENO, buf+i, 1)<=0) break;
         fsync(STDOUT_FILENO);
+        */
         break;
       default:
         waddch(consoleWin, buf[i]);
