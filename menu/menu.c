@@ -63,6 +63,7 @@ int menuPadX=0, menuPadY=0;
 int commandWidth=0, commandHeight=3;
 MenuItem menuItems[ ]={
   {"L ファイル一覧", "ls"},
+  {"  ファイル詳細一覧", "ls -l"},
   {"ESC コマンド入力", ""},
   {"RET 選択中の処理を実行", ""},
   {"↓ 下に移動", ""},
