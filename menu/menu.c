@@ -279,6 +279,7 @@ int main(int argc, char *argv[ ]){
      x, y は画面stdscrの絶対座標 */
   // menuHeight=screenHeight;
   // menuWin=subwin(stdscr, screenHeight, menuWidth, 0, 0);
+  printf("%d %d %d %d\n", screenHeight, menuWidth, screenWidth, menuWidth);
   menuWin=subwin(stdscr, screenHeight, menuWidth, 0, screenWidth-menuWidth);
   // menu=newwin(menuHeight, menuWidth, 0, screenWidth-menuWidth-1);
   if(menuWin==NULL){
