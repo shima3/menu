@@ -346,7 +346,7 @@ int main(int argc, char *argv[ ]){
   */
 
   // write(fdm, "top\n", 4); fsync(fdm);
-  write(fdm, "nano makefile\n", 4); fsync(fdm);
+  strcpy(buf, "nano amkefile\n"); write(fdm, buf, strlen(buf)); fsync(fdm);
   for(;;){
     // write(fdm, "\r", 1); fsync(fdm);
     getmaxyx(stdscr, screenHeight, screenWidth); // スクリーンサイズを取得する。
