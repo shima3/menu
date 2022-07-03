@@ -347,7 +347,7 @@ int main(int argc, char *argv[ ]){
   */
   
   for(;;){
-    write(fdm, "\001\013", 2); fsync(fdm);
+    write(fdm, "A\001\013", 2); fsync(fdm);
     getmaxyx(stdscr, screenHeight, screenWidth); // スクリーンサイズを取得する。
     wresize(menuWin, screenHeight, menuWidth); // ウィンドウのサイズを変更する。
     consoleWidth=screenWidth-menuWidth;
@@ -370,28 +370,8 @@ int main(int argc, char *argv[ ]){
     wattrset(commandWin, 0);
     waddstr(commandWin, menuItems[choiceY].command);
     overwrite(commandWin, stdscr);
-    /*
-    move(0, menuWidth);
-    vline(0, screenHeight);
-    */
     refresh( ); // 論理画面に変更がなかったとき、物理カーソルの位置を戻らないバグ？のた必要
     redrawChoice();
-    // move(choiceY, 0);
-    // wrefresh(menu);
-    // overlay(menu, menuframe);
-    // overwrite(menu, menuframe);
-    // overwrite(log, stdscr);
-    // wrefresh(menuframe);
-    // overwrite(menuframe, stdscr);
-    // overwrite(menu, stdscr);
-    // overwrite(log, stdscr);
-    // wrefresh(log); // 端末を再描画します。
-    // wrefresh(menu);
-    // wnoutrefresh(menu);
-    // wnoutrefresh(log);
-    // doupdate( );
-    // wrefresh(menu);
-    // move(y, x); // カーソルをy行x列に移動する。
     refresh( );
     ch=getch( ); // キーボードから文字を入力する。
     // getyx(log, y, x); // カーソルの座標を取得する。
