@@ -225,7 +225,7 @@ int main(int argc, char *argv[ ]){
     vline(0, screenHeight);
     */
     redrawChoice();
-    move(choiceY, 0);
+    // move(choiceY, 0);
     // wrefresh(menu);
     // overlay(menu, menuframe);
     // overwrite(menu, menuframe);
