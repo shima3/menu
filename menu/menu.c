@@ -53,6 +53,7 @@
 typedef struct{
   char *title;
   char *command;
+  char shortcut;
 } MenuItem;
 
 int screenWidth, screenHeight;
@@ -62,9 +63,10 @@ int menuWidth=20, menuHeight=0;
 int menuPadX=0, menuPadY=0;
 int commandWidth=0, commandHeight=3;
 MenuItem menuItems[ ]={
-  {"L ファイル一覧", "ls"},
+  {"C --- コマンド ---", "C"},
+  {"L ファイル一覧", "ls", 'L'},
   {" ファイル詳細一覧", "ls -l"},
-  {" ", ""},
+  {"  --- メニュー ---", ""},
   {"ESC コマンド入力", ""},
   {"RET コマンド実行", ""},
   {"↓ 下に移動", ""},
