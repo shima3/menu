@@ -151,7 +151,7 @@ void loop(){
   buf[0]=13; // carriage return
   for(;;){
     if(read(fdm, buf, 1)!=1) break;
-    if(buf[0]==10) write(STDOUT_FILENO, "\r\n", 2);
+    if(buf[0]==10) write(STDOUT_FILENO, "\r", 1);
     if(write(STDOUT_FILENO, buf, 1)!=1) break;
     /*
     len=read(fdm, buf, sizeof(buf));
