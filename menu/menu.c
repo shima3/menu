@@ -197,7 +197,7 @@ void loop(){
         fsync(STDOUT_FILENO);
         wprintw(consoleWin, "(%d)", j-i);
         */
-        waddstr(consoleWin, "(1)");
+        waddstr(consoleWin, "1");
         i=j-1;
         break;
       case 0x07:
