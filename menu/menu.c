@@ -103,7 +103,7 @@ void redrawMenu(){
 }
 
 void redrawChoice(){
-  mvwin(choiceWin, choiceY, 0);
+  mvwin(choiceWin, choiceY, screenWidth-menuWidth);
   werase(choiceWin);
   wmove(choiceWin, 0, 0);
   waddstr(choiceWin, menuItems[choiceY]);
@@ -219,8 +219,10 @@ int main(int argc, char *argv[ ]){
     // if(menuHeight<screenHeight) redrawMenu();
     redrawMenu();
     overwrite(consoleWin, stdscr);
+    /*
     move(0, menuWidth);
     vline(0, screenHeight);
+    */
     redrawChoice();
     move(choiceY, 0);
     // wrefresh(menu);
@@ -242,7 +244,6 @@ int main(int argc, char *argv[ ]){
     ch=getch( ); // キーボードから文字を入力する。
     // getyx(log, y, x); // カーソルの座標を取得する。
     // getyx(stdscr, y, x); // カーソルの座標を取得する。
-    wprintw(consoleWin, "\033c");
     wprintw(consoleWin, "ch=%d, x=%d, y=%d, w=%d, h=%d\n", ch, x, y, screenWidth, screenHeight); // curses版のprintf
     touchwin(stdscr);
     if(ch == 'Q') break;
