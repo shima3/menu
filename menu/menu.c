@@ -400,7 +400,7 @@ int main(int argc, char *argv[ ]){
     ch=getch( ); // キーボードから文字を入力する。
 
     wmove(consoleWin, 0, 0);
-    wprintw(consoleWin, "(%d)", ch);
+    wprintw(consoleWin, "(%d) ", ch);
     overwrite(consoleWin, stdscr);
     refresh( );
 
