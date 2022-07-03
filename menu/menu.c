@@ -154,7 +154,7 @@ void loop(){
     if(len<=0) break;
     for(i=0; i<len; ++i){
       switch(buf[i]){
-      case 0x1B:
+      case 0x1B00:
         /*
         waddstr(consoleWin, "1B[");
         waddch(consoleWin, buf[i+1]);
