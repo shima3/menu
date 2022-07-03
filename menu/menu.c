@@ -143,14 +143,22 @@ void redrawChoice(){
 }
 
 void loop(){
+  /*
   char buf[1024];
   int len;
+  */
+  int ch;
 
   for(;;){
+    if(read(fdm, &ch, 1)!=1) break;
+    if(ch==10) write(STDOUT_FILENO, 13, 1);
+    if(write(STDOUT_FILENO, &ch, 1)!=1) break;
+    /*
     len=read(fdm, buf, sizeof(buf));
     if(len<=0) break;
     if(write(STDOUT_FILENO, buf, len)!=len) break;
     fsync(STDOUT_FILENO);
+    */
   }
   childDie=TRUE;
 }
@@ -206,11 +214,13 @@ int main(int argc, char *argv[ ]){
   tcsetattr(STDIN_FILENO, TCSANOW, &term);
   printf("\033c"); // ANSI reset command
   */
+  /*
   term=term0stdout;
   term.c_oflag &= ~OPOST;
   // term.c_oflag |= OPOST;
   // term.c_oflag |= ONLCR;
   tcsetattr(STDOUT_FILENO, TCSANOW, &term);
+  */
 
   fdm=posix_openpt(O_RDWR); // 疑似端末を開く
   if(fdm<0){
