@@ -246,7 +246,7 @@ int main(int argc, char *argv[ ]){
   }
   // parent
   term=term0stdout;
-  cfmakeraw(&term);
+  term.c_lflag &= ~ECHO; // エコーしない。
   tcsetattr(fdm, TCSANOW, &term);
   pthread_create(&thread, NULL, (void*(*)(void*))loop, NULL);
   
