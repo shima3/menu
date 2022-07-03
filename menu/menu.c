@@ -399,10 +399,12 @@ int main(int argc, char *argv[ ]){
     refresh( );
     ch=getch( ); // キーボードから文字を入力する。
 
+    /*
     wmove(consoleWin, 0, 0);
     wprintw(consoleWin, "(%d) ", ch);
     overwrite(consoleWin, stdscr);
     refresh( );
+    */
 
     // getyx(stdscr, y, x); // カーソルの座標を取得する。
     // wprintw(consoleWin, "ch=%d, x=%d, y=%d, w=%d, h=%d\n", ch, x, y, screenWidth, screenHeight); // curses版のprintf
