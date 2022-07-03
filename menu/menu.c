@@ -360,10 +360,9 @@ int main(int argc, char *argv[ ]){
     wresize(menuWin, screenHeight, menuWidth); // ウィンドウのサイズを変更する。
     consoleWidth=screenWidth-menuWidth;
     consoleHeight=screenHeight-commandHeight;
-    wresize(consoleWin, consoleHeight, consoleWidth);
-    // if(menuHeight<screenHeight) redrawMenu();
+    // wresize(consoleWin, consoleHeight, consoleWidth);
     redrawMenu();
-    overwrite(consoleWin, stdscr);
+    // overwrite(consoleWin, stdscr);
 
     werase(commandWin);
     wmove(commandWin, 0, 0);
@@ -379,13 +378,16 @@ int main(int argc, char *argv[ ]){
     waddstr(commandWin, menuItems[choiceY].command);
     overwrite(commandWin, stdscr);
     refresh( ); // 論理画面に変更がなかったとき、物理カーソルの位置を戻らないバグ？のた必要
+
     redrawChoice();
     refresh( );
     ch=getch( ); // キーボードから文字を入力する。
-    wmove(commandWin, 0, 0);
-    wprintw(commandWin, "(%d)", ch);
-    overwrite(commandWin, stdscr);
+
+    wmove(consoleWin, 0, 0);
+    wprintw(consoleWin, "(%d)", ch);
+    overwrite(consoleWin, stdscr);
     refresh( );
+
     // getyx(stdscr, y, x); // カーソルの座標を取得する。
     // wprintw(consoleWin, "ch=%d, x=%d, y=%d, w=%d, h=%d\n", ch, x, y, screenWidth, screenHeight); // curses版のprintf
     // printf("ch=%d, x=%d, y=%d, w=%d, h=%d\r\n", ch, x, y, screenWidth, screenHeight); // curses版のprintf
