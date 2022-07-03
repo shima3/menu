@@ -151,9 +151,10 @@ void loop(){
   buf[0]=13; // carriage return
   for(;;){
     if(read(fdm, buf, 1)!=1) break;
+    waddch(consoleWin, buf[0]);
+    /*
     if(buf[0]==10) write(STDOUT_FILENO, "\r", 1);
     if(write(STDOUT_FILENO, buf, 1)!=1) break;
-    /*
     len=read(fdm, buf, sizeof(buf));
     if(len<=0) break;
     if(write(STDOUT_FILENO, buf, len)!=len) break;
