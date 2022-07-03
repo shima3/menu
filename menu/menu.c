@@ -190,7 +190,8 @@ int main(int argc, char *argv[ ]){
   scrollok(consoleWin, TRUE); // スクロールできるように設定する。
   // wprintw(logWin, "ログ\n");
 
-  choiceWin=newwin(1, screenWidth, choiceY, 0);
+  // choiceWin=newwin(1, screenWidth, choiceY, 0);
+  choiceWin=newwin(1, menuWidth, choiceY, 0);
   if(choiceWin==NULL){
     fprintf(stderr, "Failed to create a choice window.\n");
     exit(1);
