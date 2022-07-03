@@ -144,6 +144,7 @@ int main(int argc, char *argv[ ]){
     KEY_F(n)		Value of function key n
     KEY_ENTER		enter/send key
   */
+  leaveok(stdscr, TRUE);
 
   start_color( ); // カラーを有効にする。
   pair_content(0, &screenForeground, &screenBackground);
