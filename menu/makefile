@@ -1,3 +1,5 @@
+.PHONY: all
+
 TARGETS=menu console
 
 all: $(TARGETS)
