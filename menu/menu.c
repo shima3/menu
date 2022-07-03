@@ -157,14 +157,14 @@ void loop(){
         switch(buf[i+1]){
         case 0x20:
         case 0x26:
-          j=i+3;
+          j=3;
           break;
         default:
-          j=i+4;
+          j=4;
         }
-        if(write(STDOUT_FILENO, buf+i, j-i)<=0) break;
+        if(write(STDOUT_FILENO, buf+i, j)<=0) break;
         fsync(STDOUT_FILENO);
-        i=j-1;
+        i+=j-1;
       }else{
         waddch(consoleWin, buf[i]);
         overwrite(consoleWin, stdscr);
