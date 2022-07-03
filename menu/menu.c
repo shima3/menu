@@ -68,9 +68,9 @@ MenuItem menuItems[ ]={
   {"RET 選択中の処理を実行", ""},
   {"↓ 下に移動", ""},
   {"↑ 上に移動", ""},
-  {"PageDown fn+↓ 下に移動", ""},
-  {"PageUp fn+↑ 上に移動", ""},
-  {"Q 終了", ""},
+  {"fn+↓ Page Down", ""},
+  {"fn+↑ Page Up", ""},
+  {"Q メニュー終了", ""},
   {NULL, NULL}
 };
 int choiceY=0;
