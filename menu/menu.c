@@ -256,6 +256,8 @@ int main(int argc, char *argv[ ]){
     werase(commandWin);
     wmove(commandWin, 0, 0);
     waddstr(commandWin, menuItems[choiceY].title);
+    wmove(commandWin, 1, 0);
+    waddstr(commandWin, menuItems[choiceY].command);
     overwrite(commandWin, stdscr);
     /*
     move(0, menuWidth);
