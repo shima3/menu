@@ -64,7 +64,7 @@ int commandWidth=0, commandHeight=3;
 MenuItem menuItems[ ]={
   {"L ファイル一覧", "ls"},
   {" ファイル詳細一覧", "ls -l"},
-  {"", ""},
+  {" ", ""},
   {"ESC コマンド入力", ""},
   {"RET コマンド実行", ""},
   {"↓ 下に移動", ""},
