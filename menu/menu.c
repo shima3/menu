@@ -245,6 +245,9 @@ int main(int argc, char *argv[ ]){
     return errno;
   }
   // parent
+  term=term0stdout;
+  cfmakeraw(&term);
+  tcsetattr(fdm, TCSANOW, &term);
   pthread_create(&thread, NULL, (void*(*)(void*))loop, NULL);
   
   // curs_set(FALSE); // 物理カーソルを見えなくする。
