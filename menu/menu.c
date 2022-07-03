@@ -207,7 +207,8 @@ int main(int argc, char *argv[ ]){
   printf("\033c"); // ANSI reset command
   */
   term=term0stdout;
-  term.c_lflag = ONLCR;
+  term.c_lflag |= OPOST;
+  term.c_lflag |= ONLCR;
   tcsetattr(STDOUT_FILENO, TCSANOW, &term);
 
   fdm=posix_openpt(O_RDWR); // 疑似端末を開く
