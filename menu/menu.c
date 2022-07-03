@@ -50,19 +50,24 @@
 #include <locale.h>
 #include <unistd.h>
 
+typedef struct{
+  char *message;
+  char *command;
+} MenuItem;
+
 int screenWidth, screenHeight;
 WINDOW *menuPad, *menuWin, *consoleWin, *choiceWin;
 int consoleWidth, consoleHeight;
 int menuWidth=19, menuHeight=0;
 int menuPadX=0, menuPadY=0;
-char *menuItems[ ]={
-  "ESC コマンド入力",
-  "RET 選択中の処理を実行",
-  "↓ 下に移動",
-  "↑ 上に移動",
-  "PageDown fn+↓ 下に移動",
-  "PageUp fn+↑ 上に移動",
-  "Q 終了",
+MenuItem menuItems[ ]={
+  {"ESC コマンド入力", ""},
+  {"RET 選択中の処理を実行", ""},
+  {"↓ 下に移動", ""},
+  {"↑ 上に移動", ""},
+  {"PageDown fn+↓ 下に移動", ""},
+  {"PageUp fn+↑ 上に移動", ""},
+  {"Q 終了", ""},
   NULL
 };
 int choiceY=0;
@@ -70,12 +75,12 @@ int choiceY=0;
 void makeMenuPad(){
   int i;
   
-  for(menuHeight=0; menuItems[menuHeight]!=NULL; ++menuHeight);
+  for(menuHeight=0; menuItems[menuHeight].message!=NULL; ++menuHeight);
   menuPad=newpad(menuHeight, menuWidth);
   wbkgd(menuPad, COLOR_PAIR(1));
   for(i=0; i<menuHeight; ++i){
     wmove(menuPad, i, 0);
-    waddstr(menuPad, menuItems[i]);
+    waddstr(menuPad, menuItems[i].message);
   }
 }
 
@@ -113,7 +118,7 @@ void redrawChoice(){
   mvwin(choiceWin, choiceY, screenWidth-menuWidth);
   werase(choiceWin);
   wmove(choiceWin, 0, 0);
-  waddstr(choiceWin, menuItems[choiceY]);
+  waddstr(choiceWin, menuItems[choiceY].message);
   overwrite(choiceWin, stdscr);
 }
 
