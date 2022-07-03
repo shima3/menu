@@ -98,7 +98,7 @@ void redrawMenu(){
   // overlay(menuPad, menuWin);
   // overwrite(menuPad, menuWin);
   wmove(menuWin, 0, screenWidth-menuWidth);
-  for(i=0; i<screenHeight; ++i) waddstr(menuWin, "　\n");
+  for(i=0; i<screenHeight; ++i) waddstr(menuWin, "\000\n");
 
   int height=menuHeight-menuPadY;
   if(height>screenHeight) height=screenHeight;
