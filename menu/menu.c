@@ -189,7 +189,6 @@ int main(int argc, char *argv[ ]){
   tcgetattr(STDOUT_FILENO, &term0stdout);
   tcgetattr(STDERR_FILENO, &term0stderr);
 
-  printf("main 3\n");
   // 端末の状態を変更する。
   /*
   ws=ws0;
@@ -211,8 +210,8 @@ int main(int argc, char *argv[ ]){
     perror("grantpt");
   if(unlockpt(fdm)!=0) // 疑似端末の内部的なロックを解除する。
     perror("unlockpt");
-  pid=fork( );
   printf("main 1\n");
+  pid=fork( );
   if(pid==0){ // child
     strcpy(buf, ptsname(fdm));
     close(fdm);
@@ -227,8 +226,10 @@ int main(int argc, char *argv[ ]){
     ws=ws0;
     ws.ws_col=consoleWidth;
     ws.ws_row=consoleHeight;
+    /*
     if(ioctl(fds, TIOCSWINSZ, &ws)==-1) // ウィンドウサイズを設定する。
       perror("ioctl");
+    */
     dup2(fds, STDIN_FILENO);
     dup2(fds, STDOUT_FILENO);
     dup2(fds, STDERR_FILENO);
