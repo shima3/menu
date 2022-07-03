@@ -154,11 +154,14 @@ void loop(){
     if(len<=0) break;
     for(i=0; i<len; ++i){
       if(buf[i]==0x1B){
-        for(j=i+1; j<len; ++j)
-          if(buf[j] < 0x30 || buf[j] >= 0x80){
-            ++j;
-            break;
-          }
+        switch(buf[i+1]){
+        case 0x20:
+        case 0x26:
+          j=i+3;
+          break;
+        default:
+          j=i+4;
+        }
         if(write(STDOUT_FILENO, buf+i, j-i)<=0) break;
         fsync(STDOUT_FILENO);
         i=j-1;
