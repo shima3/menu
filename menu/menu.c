@@ -164,6 +164,7 @@ int main(int argc, char *argv[ ]){
     fprintf(stderr, "Failed to create a menu window.\n");
     exit(1);
   }
+  wbkgd(menuWin, COLOR_PAIR(1));
   // wvline(menuframe, 0, menuHeight);
   // wcolor_set(menu, 1, NULL);
   // wattrset(menu, COLOR_PAIR(0) | A_REVERSE);
@@ -196,7 +197,7 @@ int main(int argc, char *argv[ ]){
     fprintf(stderr, "Failed to create a choice window.\n");
     exit(1);
   }
-  wbkgd(choiceWin, COLOR_PAIR(1));
+  // wbkgd(choiceWin, COLOR_PAIR(1));
   
   // menuframe=newwin(menuHeight+1, menuWidth+1, 0, screenWidth-menuWidth-1); // ウィンドウを作成する。
   // wcolor_set(menuframe, COLOR_PAIR(1), NULL);
