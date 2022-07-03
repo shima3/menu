@@ -283,7 +283,8 @@ int main(int argc, char *argv[ ]){
     exit(1);
   }
   wbkgd(menuWin, COLOR_PAIR(1));
-  leaveok(menuWin, FALSE); // 物理カーソルの位置を元に戻す。
+  leaveok(menuWin, TRUE); // 物理カーソルの位置を元に戻す。
+  // leaveok(menuWin, FALSE); // 物理カーソルの位置を元に戻す。
   // wvline(menuframe, 0, menuHeight);
   // wcolor_set(menu, 1, NULL);
   // wattrset(menu, COLOR_PAIR(0) | A_REVERSE);
