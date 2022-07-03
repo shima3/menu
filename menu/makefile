@@ -1,6 +1,7 @@
 TARGETS=menu console
 
 all: $(TARGETS)
+	git commit -am compile
 
 menu: menu.c
 	cc menu.c -lncursesw -o menu
@@ -9,5 +10,7 @@ menu: menu.c
 console: console.c
 	cc console.c -lpthread -o console
 
+up: export LC_ALL := C
 up: all
-	LC_ALL=C scp $(TARGETS) shima@sstu.edu.ipc.hiroshima-cu.ac.jp:bin
+	scp $(TARGETS) shima@sstu.edu.ipc.hiroshima-cu.ac.jp:bin
+	git push

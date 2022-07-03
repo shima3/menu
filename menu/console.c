@@ -129,7 +129,7 @@ int main(){
   if(ioctl(STDOUT_FILENO, TIOCSWINSZ, &ws2)) // ウィンドウサイズを設定する。
     perror("ioctl");
   printf("\033c");
-  printf("ws2=(%d, %d)\n", ws2.ws_col, ws2.ws_row);
+  printf("ws2=(%d, %d)\r\n", ws2.ws_col, ws2.ws_row);
 
   fdm=posix_openpt(O_RDWR); // 疑似端末を開く
   if(fdm<0){
