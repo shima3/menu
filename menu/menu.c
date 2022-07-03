@@ -184,11 +184,11 @@ void loop(){
         break;
       default:
         waddch(consoleWin, buf[i]);
-        overwrite(consoleWin, stdscr);
-        touchwin(stdscr);
-        refresh();
       }
     }
+    overwrite(consoleWin, stdscr);
+    touchwin(stdscr);
+    refresh();
     /*
     if(read(fdm, buf, sizeof(buf))!=1) break;
     if(buf[0]==10) write(STDOUT_FILENO, "\r", 1);
