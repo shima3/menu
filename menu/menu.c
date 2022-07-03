@@ -169,6 +169,7 @@ int main(int argc, char *argv[ ]){
   int pid;
   pthread_t thread;
 
+  printf("main 2\n");
   // 端末の状態を保存する。
   if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws0)!=-1)
     wprintw(commandWin, "(%d, %d)\n", ws0.ws_col, ws0.ws_row);  // (幅, 高さ)
@@ -226,7 +227,6 @@ int main(int argc, char *argv[ ]){
     perror("execvp");
     return errno;
   }
-  printf("main 2\n");
   // parent
   pthread_create(&thread, NULL, (void*(*)(void*))loop, NULL);
 
