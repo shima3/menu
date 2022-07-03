@@ -246,6 +246,7 @@ int main(int argc, char *argv[ ]){
     move(0, menuWidth);
     vline(0, screenHeight);
     */
+    refresh( );
     redrawChoice();
     // move(choiceY, 0);
     // wrefresh(menu);
