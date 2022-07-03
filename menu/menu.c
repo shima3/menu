@@ -384,6 +384,7 @@ int main(int argc, char *argv[ ]){
     ch=getch( ); // キーボードから文字を入力する。
     wmove(commandWin, 0, 0);
     wprintw(commandWin, "(%d)", ch);
+    overwrite(commandWin, stdscr);
     refresh( );
     // getyx(stdscr, y, x); // カーソルの座標を取得する。
     // wprintw(consoleWin, "ch=%d, x=%d, y=%d, w=%d, h=%d\n", ch, x, y, screenWidth, screenHeight); // curses版のprintf
