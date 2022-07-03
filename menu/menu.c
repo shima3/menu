@@ -222,7 +222,7 @@ int main(int argc, char *argv[ ]){
     fprintf(stderr, "Failed to create a command window.\n");
     exit(1);
   }
-  wbkgd(commandWin, COLOR_PAIR(1));
+  wbkgd(commandWin, COLOR_PAIR(2));
 
   // choiceWin=newwin(1, screenWidth, choiceY, 0);
   // choiceWin=newwin(1, menuWidth, choiceY, 0);
