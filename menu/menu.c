@@ -155,11 +155,10 @@ void loop(){
     for(i=0; i<len; ++i){
       switch(buf[i]){
       case 0x1B:
-        wprintw(consoleWin, "(%x)", buf[i+1]);
         switch(buf[i+1]){
         case 0x20:
         case 0x26:
-          j=3;
+          j=i+3;
           break;
         case 0x5D: // OSC
           for(j=i+2; j<len; ++j){
@@ -168,14 +167,13 @@ void loop(){
               break;
             }
           }
-          j-=i;
           break;
         default:
-          j=4;
+          j=i+4;
         }
-        if(write(STDOUT_FILENO, buf+i, j)<=0) break;
+        if(write(STDOUT_FILENO, buf+i, j-i)<=0) break;
         fsync(STDOUT_FILENO);
-        i+=j-1;
+        i=j-1;
         break;
       case 0x07:
         if(write(STDOUT_FILENO, buf+i, 1)<=0) break;
@@ -183,10 +181,10 @@ void loop(){
         break;
       default:
         waddch(consoleWin, buf[i]);
+        overwrite(consoleWin, stdscr);
+        touchwin(stdscr);
+        refresh();
       }
-      overwrite(consoleWin, stdscr);
-      touchwin(stdscr);
-      refresh();
     }
     /*
     if(read(fdm, buf, sizeof(buf))!=1) break;
