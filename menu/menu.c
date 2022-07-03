@@ -403,6 +403,11 @@ int main(int argc, char *argv[ ]){
       if(menuPadX<screenWidth-1) ++menuPadX;
       break;
       */
+    case KEY_ENTER:
+      strcpy(buf, menuItems[choiceY].command);
+      write(fdm, buf, strlen(buf));
+      fsync(fdm);
+      break;
     default:
       for(i=0; i<menuHeight; ++i){
         if(menuItems[i].shortcut==ch){
