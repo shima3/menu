@@ -378,7 +378,6 @@ int main(int argc, char *argv[ ]){
     consoleHeight=screenHeight-commandHeight;
     // wresize(consoleWin, consoleHeight, consoleWidth);
     redrawMenu();
-    touchwin(menuWin);
     // overwrite(consoleWin, stdscr);
 
     werase(commandWin);
@@ -397,6 +396,7 @@ int main(int argc, char *argv[ ]){
     refresh( ); // 論理画面に変更がなかったとき、物理カーソルの位置を戻らないバグ？のた必要
 
     redrawChoice();
+    touchwin(stdscr);
     refresh( );
     ch=getch( ); // キーボードから文字を入力する。
 
