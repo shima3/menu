@@ -346,7 +346,7 @@ int main(int argc, char *argv[ ]){
   */
   
   for(;;){
-    write(fdm, "\001\013", 2); fsync(fdm);
+    write(fdm, "\001.\001\013", 4); fsync(fdm);
     getmaxyx(stdscr, screenHeight, screenWidth); // スクリーンサイズを取得する。
     wresize(menuWin, screenHeight, menuWidth); // ウィンドウのサイズを変更する。
     consoleWidth=screenWidth-menuWidth;
