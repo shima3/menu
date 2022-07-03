@@ -144,7 +144,7 @@ int main(int argc, char *argv[ ]){
     KEY_F(n)		Value of function key n
     KEY_ENTER		enter/send key
   */
-  leaveok(stdscr, FALSE);
+  leaveok(stdscr, FALSE); // 物理カーソルの位置を元に戻す。
 
   start_color( ); // カラーを有効にする。
   pair_content(0, &screenForeground, &screenBackground);
@@ -179,6 +179,7 @@ int main(int argc, char *argv[ ]){
     exit(1);
   }
   wbkgd(menuWin, COLOR_PAIR(1));
+  leaveok(menuWin, FALSE); // 物理カーソルの位置を元に戻す。
   // wvline(menuframe, 0, menuHeight);
   // wcolor_set(menu, 1, NULL);
   // wattrset(menu, COLOR_PAIR(0) | A_REVERSE);
