@@ -156,6 +156,7 @@ void loop(){
       switch(buf[i]){
       case 0x1B:
         waddstr(consoleWin, "^[");
+        waddch(consoleWin, buf[i+1]);
         switch(buf[i+1]){
         case 0x20:
         case 0x26:
