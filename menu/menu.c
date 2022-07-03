@@ -341,6 +341,12 @@ int main(int argc, char *argv[ ]){
       }
     }
   }
+  tcsetattr(STDOUT_FILENO, TCSANOW, &term0stdin);
+  tcsetattr(STDOUT_FILENO, TCSANOW, &term0stdout);
+  tcsetattr(STDERR_FILENO, TCSANOW, &term0stderr);
+  if(ioctl(STDOUT_FILENO, TIOCSWINSZ, &ws0)) // ウィンドウサイズを設定する。
+    perror("ioctl");
+  printf("\033c"); // ANSI reset command
   endwin( ); // 端末制御を終了する。
   /*
   printf("%d x %d\n", screenWidth, screenHeight);
