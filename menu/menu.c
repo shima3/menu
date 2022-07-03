@@ -285,7 +285,7 @@ int main(int argc, char *argv[ ]){
   }
   wbkgd(menuWin, COLOR_PAIR(1));
   // leaveok(menuWin, TRUE); // 物理カーソルの位置を元に戻さない。
-  // leaveok(menuWin, FALSE); // 物理カーソルの位置を元に戻す。
+  leaveok(menuWin, FALSE); // 物理カーソルの位置を元に戻す。
   // wvline(menuframe, 0, menuHeight);
   // wcolor_set(menu, 1, NULL);
   // wattrset(menu, COLOR_PAIR(0) | A_REVERSE);
@@ -328,8 +328,8 @@ int main(int argc, char *argv[ ]){
   }
   // wbkgd(choiceWin, COLOR_PAIR(1));
   wbkgd(choiceWin, COLOR_PAIR(2));
-  leaveok(choiceWin, TRUE); // 物理カーソルの位置を元に戻さない。
-  // leaveok(choiceWin, FALSE); // 物理カーソルの位置を元に戻す。
+  // leaveok(choiceWin, TRUE); // 物理カーソルの位置を元に戻さない。
+  leaveok(choiceWin, FALSE); // 物理カーソルの位置を元に戻す。
 
   // menuframe=newwin(menuHeight+1, menuWidth+1, 0, screenWidth-menuWidth-1); // ウィンドウを作成する。
   // wcolor_set(menuframe, COLOR_PAIR(1), NULL);
