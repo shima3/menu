@@ -396,6 +396,7 @@ int main(int argc, char *argv[ ]){
     refresh( ); // 論理画面に変更がなかったとき、物理カーソルの位置を戻らないバグ？のた必要
 
     redrawChoice();
+    touchwin(menuWin);
     refresh( );
     ch=getch( ); // キーボードから文字を入力する。
 
@@ -410,7 +411,6 @@ int main(int argc, char *argv[ ]){
     // wprintw(consoleWin, "ch=%d, x=%d, y=%d, w=%d, h=%d\n", ch, x, y, screenWidth, screenHeight); // curses版のprintf
     // printf("ch=%d, x=%d, y=%d, w=%d, h=%d\r\n", ch, x, y, screenWidth, screenHeight); // curses版のprintf
     // touchwin(stdscr);
-    touchwin(menuWin);
     if(ch == 'Q') break;
     switch(ch){
     case KEY_UP:
