@@ -162,7 +162,16 @@ void loop(){
         case 0x26:
           j=i+3;
           break;
-        case 0x5D: // OSC
+        case '[': // 0x5B CSI
+          switch(buf[i+3]){
+          case ';':
+            j=i+6;
+            break;
+          default:
+            j=i+4;
+          }
+          break;
+        case ']': // 0x5D OSC
           for(j=i+2; j<len; ++j){
             if(buf[j] == 0x07){
               ++j;
