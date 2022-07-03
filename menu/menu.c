@@ -271,8 +271,8 @@ int main(int argc, char *argv[ ]){
   term=term0stdin;
   cfmakeraw(&term);
   tcsetattr(STDIN_FILENO, TCSANOW, &term);
-  */
   printf("\033c"); // ANSI reset command
+  */
   
   for(;;){
     getmaxyx(stdscr, screenHeight, screenWidth); // スクリーンサイズを取得する。
