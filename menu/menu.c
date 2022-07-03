@@ -155,9 +155,13 @@ void loop(){
     for(i=0; i<len; ++i){
       if(buf[i]==0x1B){
         for(j=i+1; j<len; ++j)
-          if(buf[j]&0xF0 != 0x20) break;
+          if(buf[j]&0xF0 != 0x20){
+            ++j;
+            break;
+          }
         if(write(STDOUT_FILENO, buf+i, j-i)<=0) break;
         fsync(STDOUT_FILENO);
+        i=j-1;
       }else{
         waddch(consoleWin, buf[i]);
         overwrite(consoleWin, stdscr);
