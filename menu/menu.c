@@ -196,6 +196,7 @@ void loop(){
         if(write(STDOUT_FILENO, buf+i, j-i)<=0) break;
         fsync(STDOUT_FILENO);
         */
+        waddch(consoleWin, '.');
         i=j-1;
         break;
       case 0x07:
