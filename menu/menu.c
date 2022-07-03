@@ -138,6 +138,7 @@ int main(int argc, char *argv[ ]){
   char str[1024];
   short foreground, background;
   struct winsize ws0, ws;
+  struct termios term, term0stdin, term0stdout, term0stderr;
 
   // setlocale(LC_ALL, "ja_JP.UTF-8"); // ロケールをja_JP.UTF-8に設定する。
   setlocale(LC_ALL, ""); // 環境変数に従ってロケールを設定する。
@@ -255,7 +256,13 @@ int main(int argc, char *argv[ ]){
   if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws0)!=-1)
     printf("(%d, %d)\n", ws0.ws_col, ws0.ws_row);  // (幅, 高さ)
   else perror("ioctl");
-
+  tcgetattr(STDIN_FILENO, &term0stdin);
+  tcgetattr(STDOUT_FILENO, &term0stdout);
+  tcgetattr(STDERR_FILENO, &term0stderr);
+  term=term0stdin;
+  cfmakeraw(&term);
+  tcsetattr(STDIN_FILENO, TCSANOW, &term);
+  
   for(;;){
     getmaxyx(stdscr, screenHeight, screenWidth); // スクリーンサイズを取得する。
     wresize(menuWin, screenHeight, menuWidth); // ウィンドウのサイズを変更する。
