@@ -143,16 +143,16 @@ void redrawChoice(){
 }
 
 void loop(){
+  char buf[1];
   /*
-  char buf[1024];
   int len;
   */
-  int ch;
 
+  buf[0]=13; // carriage return
   for(;;){
-    if(read(fdm, &ch, 1)!=1) break;
-    if(ch==10) write(STDOUT_FILENO, 13, 1);
-    if(write(STDOUT_FILENO, &ch, 1)!=1) break;
+    if(read(fdm, buf, 1)!=1) break;
+    if(buf[0]==10) write(STDOUT_FILENO, "\r\n", 2);
+    if(write(STDOUT_FILENO, buf, 1)!=1) break;
     /*
     len=read(fdm, buf, sizeof(buf));
     if(len<=0) break;
