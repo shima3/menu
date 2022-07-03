@@ -163,13 +163,12 @@ void loop(){
           j=i+3;
           break;
         case '[': // 0x5B CSI
-          switch(buf[i+3]){
-          case ';':
-            j=i+6;
-            break;
-          default:
-            j=i+4;
-          }
+          for(j=i+2; j<len; ++j)
+            if(buf[j] < '0' || buf[j] > '9') break;
+          if(buf[j++] != ';') break;
+          for(j=i+2; j<len; ++j)
+            if(buf[j] < '0' || buf[j] > '9') break;
+          ++j;
           break;
         case ']': // 0x5D OSC
           for(j=i+2; j<len; ++j){
