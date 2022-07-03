@@ -50,6 +50,10 @@
 #include <locale.h>
 #include <unistd.h>
 
+#define __USE_BSD
+#include <termios.h>
+#include <sys/ioctl.h>	/* 44BSD requires this too */
+
 typedef struct{
   char *title;
   char *command;
@@ -68,15 +72,13 @@ MenuItem menuItems[ ]={
   {" ファイル詳細一覧", "ls -l", 0},
   {"C 作業フォルダ変更", "cd <<フォルダ名>>", 'C'},
   {" ホーム", "cd ~", 0},
-  {" 上のフォルダ", "cd ..", 'C'},
-  {"  --- メニュー ---", "", 0},
+  {" 上のフォルダ", "cd ..", 0},
+  {"M メニュー操作類", "", 0},
   {"ESC コマンド入力", "", 0},
   {"RET コマンド実行", "", 0},
   {"↓ 下に移動", "", 0},
   {"↑ 上に移動", "", 0},
-  {"fn+↓ Page Down", "", 0},
-  {"fn+↑ Page Up", "", 0},
-  {"Q メニュー終了", "", 0},
+  {"Q メニュー終了", "", 'Q'},
   {NULL, NULL}
 };
 int choiceY=0;
@@ -135,6 +137,7 @@ int main(int argc, char *argv[ ]){
   int ch=0, x=0, y=0, i;
   char str[1024];
   short foreground, background;
+  struct winsize ws0, ws;
 
   // setlocale(LC_ALL, "ja_JP.UTF-8"); // ロケールをja_JP.UTF-8に設定する。
   setlocale(LC_ALL, ""); // 環境変数に従ってロケールを設定する。
@@ -248,6 +251,10 @@ int main(int argc, char *argv[ ]){
   waddch(menuframe, ACS_LLCORNER);
   whline(menuframe, 0, menuWidth);
   */
+
+  if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws0)!=-1)
+    printf("(%d, %d)\n", ws0.ws_col, ws0.ws_row);  // (幅, 高さ)
+  else perror("ioctl");
 
   for(;;){
     getmaxyx(stdscr, screenHeight, screenWidth); // スクリーンサイズを取得する。
