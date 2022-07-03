@@ -161,6 +161,9 @@ void loop(){
         waddch(consoleWin, buf[i+3]);
         waddch(consoleWin, buf[i+4]);
         waddch(consoleWin, buf[i+5]);
+        waddch(consoleWin, buf[i+6]);
+        waddch(consoleWin, buf[i+7]);
+        waddstr(consoleWin, "]");
         switch(buf[i+1]){
         case 0x20:
         case 0x26:
