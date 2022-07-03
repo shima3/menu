@@ -97,8 +97,10 @@ void redrawMenu(){
      The copywin() routine provides a finer granularity of control over the overlay() and overwrite() routines. Like in the prefresh() routine, a rectangle is specified in the destination window, (dminrow, dmincol) and (dmaxrow, dmaxcol), and the upper-left-corner coordinates of the source window, (sminrow, smincol). If the argument overlay is true, then copying is non-destructive, as in overlay(). */
   // overlay(menuPad, menuWin);
   // overwrite(menuPad, menuWin);
-  wmove(menuWin, 0, screenWidth-menuWidth);
-  for(i=0; i<screenHeight; ++i) waddstr(menuWin, "\t\n");
+  for(i=0; i<screenHeight; ++i){
+    wmove(menuWin, i, screenWidth-menuWidth);
+    waddstr(menuWin, ":");
+  }
 
   int height=menuHeight-menuPadY;
   if(height>screenHeight) height=screenHeight;
