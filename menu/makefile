@@ -1,5 +1,4 @@
 .PHONY: all
-.IGNORE: all
 
 TARGETS=menu console
 
@@ -14,6 +13,6 @@ console: console.c
 	cc console.c -lpthread -o console
 
 up: export LC_ALL := C
-up: all
+up:
 	scp $(TARGETS) shima@sstu.edu.ipc.hiroshima-cu.ac.jp:bin
 	git push
