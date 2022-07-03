@@ -147,8 +147,8 @@ int main(int argc, char *argv[ ]){
   init_pair(1, screenBackground, screenForeground);
   /*
     bkgd(COLOR_PAIR(0));
-    use_default_colors( ); // 端末のデフォルトの配色を利用する。
   */
+  use_default_colors( ); // 端末のデフォルトの配色を利用する。
 
   getmaxyx(stdscr, screenHeight, screenWidth); // スクリーンサイズを取得する。
   // ch=inch( ); // スクリーン上のカーソル位置にある文字を読み取る。
