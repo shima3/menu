@@ -25,6 +25,7 @@
   -- 右側に別のウィンドウがあれば、右半分がはみ出る。
   -- 画面の右端であれば、次の行の左端から表示される。
   恐らく、cursesライブラリのバグと考えられる。
+  - コンソール内でエディタなどを起動した場合のため、コンソールは左上にしか配置できない。
 
   Design:
   - 画面を左右に分割し、左側はメニュー、右側はコンソールとする。
@@ -238,6 +239,7 @@ int main(int argc, char *argv[ ]){
     ch=getch( ); // キーボードから文字を入力する。
     // getyx(log, y, x); // カーソルの座標を取得する。
     // getyx(stdscr, y, x); // カーソルの座標を取得する。
+    wprintw(consoleWin, "\033c");
     wprintw(consoleWin, "ch=%d, x=%d, y=%d, w=%d, h=%d\n", ch, x, y, screenWidth, screenHeight); // curses版のprintf
     touchwin(stdscr);
     if(ch == 'Q') break;
