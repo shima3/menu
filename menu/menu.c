@@ -72,7 +72,7 @@ void makeMenuPad(){
   
   for(menuHeight=0; menuItems[menuHeight]!=NULL; ++menuHeight);
   menuPad=newpad(menuHeight, menuWidth);
-  // wbkgd(menuPad, COLOR_PAIR(1));
+  wbkgd(menuPad, COLOR_PAIR(1));
   for(i=0; i<menuHeight; ++i){
     wmove(menuPad, i, 0);
     waddstr(menuPad, menuItems[i]);
