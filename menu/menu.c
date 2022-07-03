@@ -386,7 +386,7 @@ int main(int argc, char *argv[ ]){
     fprintf(stderr, "Failed to create a console window.\n");
     exit(1);
   }
-  wbkgd(consoleWin, COLOR_PAIR(1));
+  wbkgd(consoleWin, COLOR_PAIR(2));
   scrollok(consoleWin, TRUE); // スクロールできるように設定する。
   // wprintw(logWin, "ログ\n");
 
