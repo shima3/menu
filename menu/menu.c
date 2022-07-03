@@ -410,6 +410,7 @@ int main(int argc, char *argv[ ]){
     // wprintw(consoleWin, "ch=%d, x=%d, y=%d, w=%d, h=%d\n", ch, x, y, screenWidth, screenHeight); // curses版のprintf
     // printf("ch=%d, x=%d, y=%d, w=%d, h=%d\r\n", ch, x, y, screenWidth, screenHeight); // curses版のprintf
     // touchwin(stdscr);
+    touchwin(menuWin);
     if(ch == 'Q') break;
     switch(ch){
     case KEY_UP:
