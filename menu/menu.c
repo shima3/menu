@@ -51,7 +51,7 @@
 #include <unistd.h>
 
 int screenWidth, screenHeight;
-int menuWidth=20, menuHeight=0;
+int menuWidth=19, menuHeight=0;
 WINDOW *menuPad, *menuWin, *consoleWin, *choiceWin;
 int menuPadX=0, menuPadY=0;
 char *menuItems[ ]={
