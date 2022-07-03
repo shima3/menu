@@ -1,7 +1,7 @@
 TARGETS=menu console
 
 all: $(TARGETS)
-	git commit -am compile
+	git commit -am "Successful compilation"
 
 menu: menu.c
 	cc menu.c -lncursesw -o menu
