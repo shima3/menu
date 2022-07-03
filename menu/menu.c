@@ -169,6 +169,7 @@ int main(int argc, char *argv[ ]){
   int pid;
   pthread_t thread;
 
+  initscr( ); // スクリーンを初期化する。
   getmaxyx(stdscr, screenHeight, screenWidth); // スクリーンサイズを取得する。
   // ch=inch( ); // スクリーン上のカーソル位置にある文字を読み取る。
   // getstr(str); // キーボードから文字列を入力する。
@@ -247,7 +248,6 @@ int main(int argc, char *argv[ ]){
   setlocale(LC_ALL, ""); // 環境変数に従ってロケールを設定する。
   // printf("%s\n", setlocale(LC_ALL, NULL)); // 現在のロケールを確認する。
   
-  initscr( ); // スクリーンを初期化する。
   // curs_set(FALSE); // 物理カーソルを見えなくする。
   raw( ); // Ctrl+C や Ctrl+Z などもキー入力するよう設定する。
   cbreak( ); // 入力バッファを使用しないモードに設定する。
