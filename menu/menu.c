@@ -166,7 +166,9 @@ void loop(){
           j=i+3;
           break;
         case '[': // 0x5B CSI
-          for(j=i+2; j<len; ++j)
+          j=i+2;
+          if(buf[j] == '>') ++j;
+          for(; j<len; ++j)
             if(buf[j] < '0' || buf[j] > '9') break;
           if(buf[j++] != ';') break;
           for(j=i+2; j<len; ++j)
