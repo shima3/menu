@@ -150,6 +150,7 @@ void loop(){
   for(;;){
     len=read(fdm, buf, sizeof(buf));
     if(len<=0) break;
+    buf[len]=0;
     waddstr(consoleWin, buf);
     overwrite(consoleWin, stdscr);
     touchwin(stdscr);
