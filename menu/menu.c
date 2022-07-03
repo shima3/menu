@@ -300,7 +300,7 @@ int main(int argc, char *argv[ ]){
      指定したウィンドウと文字列バッファを共有する。*/
   // consoleWidth=screenWidth-menuWidth-1;
   // consoleWin=newwin(screenHeight, consoleWidth, 0, menuWidth+1); // ウィンドウを作成する 。
-  consoleWin=newwin(consoleHeight, consoleWidth-1, 0, 0); // ウィンドウを作成する 。
+  consoleWin=newwin(consoleHeight, consoleWidth, 0, 0); // ウィンドウを作成する 。
   // menu=subwin(stdscr, 10, 20, 10, 10); // ウィンドウを作成する。
   // log=newwin(screenHeight, screenWidth, 0, 0); // ウィンドウを作成する。
   if(consoleWin==NULL){
@@ -312,7 +312,7 @@ int main(int argc, char *argv[ ]){
   // wprintw(logWin, "ログ\n");
 
   commandWidth=screenWidth-menuWidth;
-  commandWin=subwin(stdscr, commandHeight, commandWidth, consoleHeight, 0);
+  commandWin=subwin(stdscr, commandHeight, commandWidth-1, consoleHeight, 0);
   if(commandWin==NULL){
     fprintf(stderr, "Failed to create a command window.\n");
     exit(1);
