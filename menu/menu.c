@@ -262,12 +262,12 @@ int main(int argc, char *argv[ ]){
   tcgetattr(STDERR_FILENO, &term0stderr);
 
   // 端末の状態を変更する。
+  /*
   ws=ws0;
   ws.ws_col=consoleWidth;
   ws.ws_row=consoleHeight;
   if(ioctl(STDOUT_FILENO, TIOCSWINSZ, &ws)) // ウィンドウサイズを設定する。
     perror("ioctl");
-  /*
   term=term0stdin;
   cfmakeraw(&term);
   tcsetattr(STDIN_FILENO, TCSANOW, &term);
@@ -275,9 +275,8 @@ int main(int argc, char *argv[ ]){
   */
   
   for(;;){
-    // getmaxyx(stdscr, screenHeight, screenWidth); // スクリーンサイズを取得する。
-    // wresize(menuWin, screenHeight, menuWidth); // ウィンドウのサイズを変更する。
-    // consoleWidth=screenWidth-menuWidth-1;
+    getmaxyx(stdscr, screenHeight, screenWidth); // スクリーンサイズを取得する。
+    wresize(menuWin, screenHeight, menuWidth); // ウィンドウのサイズを変更する。
     consoleWidth=screenWidth-menuWidth;
     consoleHeight=screenHeight-commandHeight;
     wresize(consoleWin, consoleHeight, consoleWidth);
