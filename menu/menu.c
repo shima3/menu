@@ -275,8 +275,8 @@ int main(int argc, char *argv[ ]){
   */
   
   for(;;){
-    getmaxyx(stdscr, screenHeight, screenWidth); // スクリーンサイズを取得する。
-    wresize(menuWin, screenHeight, menuWidth); // ウィンドウのサイズを変更する。
+    // getmaxyx(stdscr, screenHeight, screenWidth); // スクリーンサイズを取得する。
+    // wresize(menuWin, screenHeight, menuWidth); // ウィンドウのサイズを変更する。
     // consoleWidth=screenWidth-menuWidth-1;
     consoleWidth=screenWidth-menuWidth;
     consoleHeight=screenHeight-commandHeight;
