@@ -148,16 +148,26 @@ void loop(){
   char buf[256];
   int len, i, j;
 
-  buf[0]=13; // carriage return
+  // buf[0]=13; // carriage return
   for(;;){
     len=read(fdm, buf, sizeof(buf));
     if(len<=0) break;
     for(i=0; i<len; ++i){
-      if(buf[i]==0x1B00){
+      switch(buf[i]){
+      case 0x1B:
         switch(buf[i+1]){
         case 0x20:
         case 0x26:
           j=3;
+          break;
+        case 0x5D: // OSC
+          for(j=i+2; j<len; ++j){
+            if(buf[j] == 0x07){
+              ++j;
+              break;
+            }
+          }
+          j-=i;
           break;
         default:
           j=4;
@@ -165,7 +175,12 @@ void loop(){
         if(write(STDOUT_FILENO, buf+i, j)<=0) break;
         fsync(STDOUT_FILENO);
         i+=j-1;
-      }else{
+        break;
+      case 0x07:
+        if(write(STDOUT_FILENO, buf+i, 1)<=0) break;
+        fsync(STDOUT_FILENO);
+        break;
+      default:
         waddch(consoleWin, buf[i]);
         overwrite(consoleWin, stdscr);
         touchwin(stdscr);
