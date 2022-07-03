@@ -255,7 +255,7 @@ int main(int argc, char *argv[ ]){
 
   // 端末の状態を保存する。
   if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws0)!=-1)
-    wprintw(stdscr, "(%d, %d)\n", ws0.ws_col, ws0.ws_row);  // (幅, 高さ)
+    wprintw(commandWin, "(%d, %d)\n", ws0.ws_col, ws0.ws_row);  // (幅, 高さ)
   else perror("ioctl");
   tcgetattr(STDIN_FILENO, &term0stdin);
   tcgetattr(STDOUT_FILENO, &term0stdout);
