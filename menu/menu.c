@@ -208,7 +208,8 @@ int main(int argc, char *argv[ ]){
   // wprintw(logWin, "ログ\n");
 
   // choiceWin=newwin(1, screenWidth, choiceY, 0);
-  choiceWin=newwin(1, menuWidth, choiceY, 0);
+  // choiceWin=newwin(1, menuWidth, choiceY, 0);
+  choiceWin=newwin(1, menuWidth-1, choiceY, 0);
   if(choiceWin==NULL){
     fprintf(stderr, "Failed to create a choice window.\n");
     exit(1);
