@@ -169,7 +169,18 @@ int main(int argc, char *argv[ ]){
   int pid;
   pthread_t thread;
 
-  printf("main 2\n");
+  getmaxyx(stdscr, screenHeight, screenWidth); // スクリーンサイズを取得する。
+  // ch=inch( ); // スクリーン上のカーソル位置にある文字を読み取る。
+  // getstr(str); // キーボードから文字列を入力する。
+  // instr(str); //  スクリーン上のカーソル位置にある文字列を読み取る。
+  // nodelay(stdscr, TRUE); // 非ブロッキングモードに設定する。入力なし=ERR=-1
+  // timeout(10); // 入力の待ち時間を10msに設定する。
+  // timeout(0); // 非ブロッキングモードに設定する。
+  // timeout(-1); // ブロッキングモードに設定する。
+  // scrollok(menu, TRUE); // winをスクロールできるように設定する。
+  consoleWidth=screenWidth-menuWidth;
+  consoleHeight=screenHeight-commandHeight;
+
   // 端末の状態を保存する。
   if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws0)!=-1)
     printf("(%d, %d)\n", ws0.ws_col, ws0.ws_row);  // (幅, 高さ)
@@ -259,16 +270,6 @@ int main(int argc, char *argv[ ]){
   */
   use_default_colors( ); // 端末のデフォルトの配色を利用する。
 
-  getmaxyx(stdscr, screenHeight, screenWidth); // スクリーンサイズを取得する。
-  // ch=inch( ); // スクリーン上のカーソル位置にある文字を読み取る。
-  // getstr(str); // キーボードから文字列を入力する。
-  // instr(str); //  スクリーン上のカーソル位置にある文字列を読み取る。
-  // nodelay(stdscr, TRUE); // 非ブロッキングモードに設定する。入力なし=ERR=-1
-  // timeout(10); // 入力の待ち時間を10msに設定する。
-  // timeout(0); // 非ブロッキングモードに設定する。
-  // timeout(-1); // ブロッキングモードに設定する。
-  // scrollok(menu, TRUE); // winをスクロールできるように設定する。
-
   makeMenuPad();
   
   /* WINDOW *subwin(WINDOW *orig, int lines, int cols, int y, int x);
@@ -298,8 +299,6 @@ int main(int argc, char *argv[ ]){
      nlines行，ncols列の新しいウィンドウをスクリーンのy行，x列目に作成する。
      指定したウィンドウと文字列バッファを共有する。*/
   // consoleWidth=screenWidth-menuWidth-1;
-  consoleWidth=screenWidth-menuWidth;
-  consoleHeight=screenHeight-commandHeight;
   // consoleWin=newwin(screenHeight, consoleWidth, 0, menuWidth+1); // ウィンドウを作成する 。
   consoleWin=newwin(consoleHeight, consoleWidth, 0, 0); // ウィンドウを作成する 。
   // menu=subwin(stdscr, 10, 20, 10, 10); // ウィンドウを作成する。
