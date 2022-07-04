@@ -130,7 +130,7 @@ void redrawMenu(){
     wmove(menuWin, i, 0);
     waddstr(menuWin, "\u200B"); // ZERO WIDTH SPACE
   }
-  // wmove(menuWin, 0, 0);
+  wmove(menuWin, 0, 0);
 
   int height=menuHeight-menuPadY;
   if(height>screenHeight) height=screenHeight;
@@ -470,7 +470,7 @@ int main(int argc, char *argv[ ]){
     refresh( ); // 論理画面に変更がなかったとき、物理カーソルの位置が戻らないバグ？のた必要
 
     redrawChoice();
-    overwrite(consoleWin, stdscr);
+    // overwrite(consoleWin, stdscr);
     touchwin(stdscr);
     refresh( );
 
