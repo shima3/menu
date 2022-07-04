@@ -334,6 +334,7 @@ int menuMode(){
       fsync(fdm);
       break;
     case 0x1B: // escape key
+      overwrite(menuWin, stdscr);
       return TRUE;
     default:
       for(i=0; i<menuHeight; ++i){
@@ -356,6 +357,7 @@ void consoleMode( ){
       return;
     case 'L'&0x1F:
       werase(consoleWin);
+      refresh( );
       break;
     default:
       write(fdm, &ch, 1);
@@ -366,7 +368,7 @@ void consoleMode( ){
 
 int main(int argc, char *argv[ ]){
   int x=0, y=0, curX=0, curY=0;
-  char buf[1024];
+  // char buf[1024];
   short foreground, background;
   struct winsize ws0, ws;
   struct termios term, term0stdin, term0stdout, term0stderr;
@@ -442,10 +444,8 @@ int main(int argc, char *argv[ ]){
   printf("main 1\n");
   pid=fork( );
   if(pid==0){ // child
-    strcpy(buf, ptsname(fdm));
     close(fdm);
-    printf("slave %s\r\n", buf);
-    fds=open(buf, O_RDWR);
+    fds=open(ptsname(fdm), O_RDWR);
     if(fds<0){
       perror("Error: open slave PTY");
       exit(1);
@@ -595,6 +595,6 @@ int main(int argc, char *argv[ ]){
   printf("前景 %d, 背景 %d\n", screenForeground, screenBackground);
   printf("menuWin=%lx\n", (long)menuWin);
   */
-  printf("(%d, %d)\n", ws0.ws_col, ws0.ws_row);  // (幅, 高さ)
+  // printf("(%d, %d)\n", ws0.ws_col, ws0.ws_row);  // (幅, 高さ)
   return 0;
 }
