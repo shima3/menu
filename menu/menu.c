@@ -251,6 +251,8 @@ int main(int argc, char *argv[ ]){
   // printf("%s\n", setlocale(LC_ALL, NULL)); // 現在のロケールを確認する。
 
   initscr( ); // スクリーンを初期化する。
+  curs_set(FALSE); // カーソルを表示しないモードに設定する。
+  // curs_set(TRUE); // カーソルを表示するモードに設定する。
   getmaxyx(stdscr, screenHeight, screenWidth); // スクリーンサイズを取得する。
   // ch=inch( ); // スクリーン上のカーソル位置にある文字を読み取る。
   // getstr(str); // キーボードから文字列を入力する。
@@ -488,7 +490,7 @@ int main(int argc, char *argv[ ]){
     */
 
     getyx(consoleWin, y, x);
-    waddch(consoleWin, '*');
+    waddch(consoleWin, '_');
     wmove(consoleWin, y, x);
     // wdelch(consoleWin);
     overwrite(consoleWin, stdscr);
