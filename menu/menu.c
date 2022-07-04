@@ -191,18 +191,16 @@ void loop(){
         // for(++i; i<j; ++i) waddch(consoleWin, buf[i]);
         i=j-1;
         break;
-        /*
       case 0x07:
+        if(mvcur(-1, -1, consoleHeight-1, 0) == ERR)
+          waddstr(consoleWin, "[ERR]");
+        else waddstr(consoleWin, "[OK]");
+        break;
+        /*
         if(write(STDOUT_FILENO, buf+i, 1)<=0) break;
         fsync(STDOUT_FILENO);
-        break;
         */
       case '\r':
-        if(buf[i+1] == '\r'){
-          if(mvcur(-1, -1, consoleHeight-1, 0) == ERR)
-            waddstr(consoleWin, "[ERR]");
-          else waddstr(consoleWin, "[OK]");
-        }
         break;
       default:
         // if(buf[i] >= 0x20)
@@ -437,7 +435,7 @@ int main(int argc, char *argv[ ]){
 
   // write(fdm, "top\n", 4); fsync(fdm);
   // strcpy(buf, "nano makefile\n"); write(fdm, buf, strlen(buf)); fsync(fdm);
-  strcpy(buf, "export PS1=\"$ \\r\\r\"\n"); write(fdm, buf, strlen(buf));
+  strcpy(buf, "export PS1=\"$ \007\"\n"); write(fdm, buf, strlen(buf));
   // strcpy(buf, "echo $PS1\n"); write(fdm, buf, strlen(buf));
   fsync(fdm);
   for(;;){
