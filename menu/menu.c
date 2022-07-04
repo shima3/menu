@@ -198,8 +198,8 @@ void loop(){
         break;
         */
       case '\r':
-        mvcur(0, 0, 0, 1);
-        mvcur(0, 1, 0, 0);
+        mvcur(0, 0, 0, -1000);
+        // mvcur(0, 1, 0, 0);
         break;
       default:
         // if(buf[i] >= 0x20)
