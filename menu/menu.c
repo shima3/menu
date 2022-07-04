@@ -397,7 +397,7 @@ int main(int argc, char *argv[ ]){
   // printf("%s\n", setlocale(LC_ALL, NULL)); // 現在のロケールを確認する。
 
   initscr( ); // スクリーンを初期化する。
-  ESCDELAY = 10;
+  set_escdelay(10);
   curs_set(FALSE); // カーソルを表示しないモードに設定する。
   // curs_set(TRUE); // カーソルを表示するモードに設定する。
   getmaxyx(stdscr, screenHeight, screenWidth); // スクリーンサイズを取得する。
