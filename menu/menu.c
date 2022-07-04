@@ -198,6 +198,11 @@ void loop(){
         break;
         */
       case '\r':
+        if(buf[i+1] == '\r'){
+          if(mvcur(-1, -1, consoleHeight-1, 0) == ERR)
+            waddstr(consoleWin, "[ERR]");
+          else waddstr(consoleWin, "[OK]");
+        }
         break;
       default:
         // if(buf[i] >= 0x20)
@@ -212,9 +217,6 @@ void loop(){
     }
     overwrite(consoleWin, stdscr);
     touchwin(stdscr);
-        if(mvcur(-1, -1, consoleHeight-1, 0) == ERR)
-          waddstr(consoleWin, "[ERR]");
-        else waddstr(consoleWin, "[OK]");
     refresh();
     /*
     if(read(fdm, buf, sizeof(buf))!=1) break;
@@ -435,8 +437,9 @@ int main(int argc, char *argv[ ]){
 
   // write(fdm, "top\n", 4); fsync(fdm);
   // strcpy(buf, "nano makefile\n"); write(fdm, buf, strlen(buf)); fsync(fdm);
-  // strcpy(buf, "export PS1=\"\\r$ \"\n"); write(fdm, buf, strlen(buf));
-  // strcpy(buf, "echo $PS1\n"); write(fdm, buf, strlen(buf)); fsync(fdm);
+  strcpy(buf, "export PS1=\"\\r\\r$ \"\n"); write(fdm, buf, strlen(buf));
+  // strcpy(buf, "echo $PS1\n"); write(fdm, buf, strlen(buf));
+  fsync(fdm);
   for(;;){
     // write(fdm, "\r", 1); fsync(fdm);
     getmaxyx(stdscr, screenHeight, screenWidth); // スクリーンサイズを取得する。
