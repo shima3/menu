@@ -200,11 +200,14 @@ void loop(){
       case '\r':
         break;
       default:
-        if(buf[i] >= 0x20) waddch(consoleWin, buf[i]);
+        // if(buf[i] >= 0x20)
+          waddch(consoleWin, buf[i]);
+          /*
         else{
           waddch(consoleWin, '^');
           waddch(consoleWin, buf[i]+0x40);
         }
+          */
       }
     }
     overwrite(consoleWin, stdscr);
