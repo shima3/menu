@@ -408,8 +408,8 @@ int main(int argc, char *argv[ ]){
     exit(1);
   }
   // wbkgd(commandWin, COLOR_PAIR(2));
-  // leaveok(commandWin, TRUE); // 物理カーソルの位置を元に戻す。
-  leaveok(commandWin, FALSE); // 物理カーソルの位置を元に戻す。
+  leaveok(commandWin, TRUE); // 物理カーソルの位置を元に戻す。
+  // leaveok(commandWin, FALSE); // 物理カーソルの位置を元に戻す。
 
   // choiceWin=newwin(1, screenWidth, choiceY, 0);
   // choiceWin=newwin(1, menuWidth, choiceY, 0);
