@@ -192,7 +192,7 @@ void loop(){
         i=j-1;
         break;
       case 0x07:
-        if(mvcur(-1, -1, consoleHeight-1, 0) == ERR)
+        if(mvcur(-1, -1, consoleHeight-1, 1) == ERR)
           waddstr(consoleWin, "[ERR]");
         else waddstr(consoleWin, "[OK]");
         break;
