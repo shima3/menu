@@ -474,9 +474,9 @@ int main(int argc, char *argv[ ]){
     if(mvcur(-1, -1, consoleHeight-1, 0) == ERR)
       waddstr(consoleWin, "[ERR]");
     else waddstr(consoleWin, "[OK]");
+    */
     getyx(consoleWin, y, x);
     mvcur(-1, -1, y, x);
-    */
     ch=getch( ); // キーボードから文字を入力する。
 
     /*
