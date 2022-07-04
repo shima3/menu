@@ -392,7 +392,7 @@ int main(int argc, char *argv[ ]){
   }
   // leaveok(consoleWin, TRUE);
   wbkgd(consoleWin, COLOR_PAIR(2));
-  // scrollok(consoleWin, TRUE); // スクロールできるように設定する。
+  scrollok(consoleWin, TRUE); // スクロールできるように設定する。
   // wprintw(logWin, "ログ\n");
 
   commandWidth=screenWidth-menuWidth;
