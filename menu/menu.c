@@ -475,6 +475,8 @@ int main(int argc, char *argv[ ]){
       waddstr(consoleWin, "[ERR]");
     else waddstr(consoleWin, "[OK]");
     */
+    overwrite(consoleWin, stdscr);
+    refresh( );
     getyx(consoleWin, y, x);
     mvcur(0, 0, y, x);
     // wprintw(consoleWin, "(%d,%d)", x, y);
@@ -483,8 +485,6 @@ int main(int argc, char *argv[ ]){
     /*
     wmove(consoleWin, 0, 0);
     wprintw(consoleWin, "(%d) ", ch);
-    overwrite(consoleWin, stdscr);
-    refresh( );
     */
 
     // getyx(stdscr, y, x); // カーソルの座標を取得する。
