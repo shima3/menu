@@ -313,6 +313,7 @@ int menuMode(){
 
     wmove(commandWin, 0, 0);
     waddch(commandWin, ch);
+    refresh( );
 
     switch(ch){
     case KEY_UP:
