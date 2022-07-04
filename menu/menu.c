@@ -479,8 +479,8 @@ int main(int argc, char *argv[ ]){
     refresh( );
     getyx(consoleWin, y, x);
     wprintw(consoleWin, "(%d,%d)", x, y);
-    mvcur(-1, -1, 0, 0);
-    mvcur(0, 0, y, x);
+    // mvcur(-1, -1, 0, 0);
+    // mvcur(0, 0, y, x);
     ch=getch( ); // キーボードから文字を入力する。
 
     /*
