@@ -210,10 +210,11 @@ void loop(){
           */
       }
     }
+    mvcur(0, 0, 0, 1);
     overwrite(consoleWin, stdscr);
     touchwin(stdscr);
     refresh();
-    mvcur(0, 0, 0, 0);
+    mvcur(0, 1, 0, 0);
     /*
     if(read(fdm, buf, sizeof(buf))!=1) break;
     if(buf[0]==10) write(STDOUT_FILENO, "\r", 1);
