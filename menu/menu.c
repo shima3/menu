@@ -313,6 +313,7 @@ int menuMode(){
 
     wmove(consoleWin, 0, 0);
     waddch(consoleWin, ch);
+    overwrite(consoleWin, stdscr);
     refresh( );
 
     switch(ch){
