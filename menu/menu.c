@@ -488,7 +488,7 @@ int main(int argc, char *argv[ ]){
     */
 
     getyx(consoleWin, y, x);
-    waddch(consoleWin, '_');
+    waddch(consoleWin, '*');
     wmove(consoleWin, y, x);
     // wdelch(consoleWin);
     overwrite(consoleWin, stdscr);
