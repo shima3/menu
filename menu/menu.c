@@ -351,9 +351,16 @@ void consoleMode( ){
 
   for(;;){
     ch=getch( );
-    if(ch == 0x1B) break;
-    write(fdm, &ch, 1);
-    fsync(fdm);
+    switch(ch){
+    case 0x1B:
+      return;
+    case 'L'&0x1F:
+      werase(consoleWin);
+      break;
+    default:
+      write(fdm, &ch, 1);
+      fsync(fdm);
+    }
   }
 }
 
