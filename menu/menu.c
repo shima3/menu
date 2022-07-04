@@ -463,7 +463,8 @@ int main(int argc, char *argv[ ]){
     redrawChoice();
     touchwin(stdscr);
     if(mvcur(-1, -1, consoleHeight-1, 0) == ERR)
-      waddstr(consoleWin, "...");
+      waddstr(consoleWin, "[ERR]");
+    else waddstr(consoleWin, "[OK]");
     refresh( );
     ch=getch( ); // キーボードから文字を入力する。
 
