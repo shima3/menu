@@ -312,7 +312,7 @@ int menuMode(){
     // touchwin(stdscr);
 
     wmove(consoleWin, 0, 0);
-    waddch(consoleWin, ch);
+    wprintw(consoleWin, "(%c)", ch);
     overwrite(consoleWin, stdscr);
     refresh( );
 
