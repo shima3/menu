@@ -195,8 +195,9 @@ void loop(){
         /*
         if(write(STDOUT_FILENO, buf+i, j-i)<=0) break;
         fsync(STDOUT_FILENO);
-        */
         wprintw(consoleWin, "[%d]", j-i);
+        */
+        for(; i<j; ++i) waddch(consoleWin, buf[i]);
         i=j-1;
         break;
       case 0x07:
