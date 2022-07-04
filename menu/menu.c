@@ -462,8 +462,8 @@ int main(int argc, char *argv[ ]){
 
     redrawChoice();
     touchwin(stdscr);
-    refresh( );
     mvcur(0, 0, consoleHeight-1, 0);
+    refresh( );
     ch=getch( ); // キーボードから文字を入力する。
 
     /*
