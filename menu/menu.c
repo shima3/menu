@@ -185,8 +185,6 @@ void loop(){
         default:
           j=i+4;
         }
-        mvcur(0, 0, 0, 1);
-        mvcur(0, 1, 0, 0);
         if(write(STDOUT_FILENO, buf+i, j-i)<=0) break;
         fsync(STDOUT_FILENO);
         // wprintw(consoleWin, "[%d]", j-i);
@@ -199,10 +197,10 @@ void loop(){
         fsync(STDOUT_FILENO);
         break;
         */
-        /*
       case '\r':
+        mvcur(0, 0, 0, 1);
+        mvcur(0, 1, 0, 0);
         break;
-        */
       default:
         // if(buf[i] >= 0x20)
           waddch(consoleWin, buf[i]);
