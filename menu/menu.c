@@ -130,12 +130,12 @@ void redrawMenu(){
     wmove(menuWin, i, 0);
     waddstr(menuWin, "\u200B"); // ZERO WIDTH SPACE
   }
-  wmove(menuWin, 0, 0);
 
   int height=menuHeight-menuPadY;
   if(height>screenHeight) height=screenHeight;
   copywin(menuPad, menuWin, menuPadY, menuPadX, 0, 0, height-1, menuWidth-1, FALSE);
   // copywin(menuPad, menuWin, 0, 0, 0, 0, screenHeight, menuWidth, TRUE);
+  wmove(menuWin, 0, 0);
 }
 
 void redrawChoice(){
