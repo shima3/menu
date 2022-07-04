@@ -489,12 +489,10 @@ int main(int argc, char *argv[ ]){
 
     getyx(consoleWin, y, x);
     waddch(consoleWin, '*');
-    wmove(consoleWin, y, x);
+    // wmove(consoleWin, y, x);
     // wdelch(consoleWin);
     overwrite(consoleWin, stdscr);
     // wprintw(consoleWin, "(%d,%d)", x, y);
-    // mvcur(-1, -1, 0, 0);
-    // mvcur(0, 0, y, x);
     touchwin(stdscr);
     refresh( );
     
