@@ -470,25 +470,25 @@ int main(int argc, char *argv[ ]){
     waddstr(commandWin, menuItems[choiceY].command);
     overwrite(commandWin, stdscr);
 
+    redrawChoice();
     refresh( ); // 論理画面に変更がなかったとき、物理カーソルの位置が戻らないバグ？のた必要
 
-    redrawChoice();
-    touchwin(consoleWin);
-    overwrite(consoleWin, stdscr);
-    touchwin(stdscr);
-    refresh( );
-
+    // touchwin(consoleWin);
     /*
     if(mvcur(-1, -1, consoleHeight-1, 0) == ERR)
       waddstr(consoleWin, "[ERR]");
     else waddstr(consoleWin, "[OK]");
-    overwrite(consoleWin, stdscr);
-    refresh( );
     */
-    // getyx(consoleWin, y, x);
+    getyx(consoleWin, y, x);
+    waddch(consoleWin, '.');
+    wmove(consoleWin, y, x);
+    wdelch(consoleWin);
+    overwrite(consoleWin, stdscr);
     // wprintw(consoleWin, "(%d,%d)", x, y);
     // mvcur(-1, -1, 0, 0);
     // mvcur(0, 0, y, x);
+    // touchwin(stdscr);
+    refresh( );
     ch=getch( ); // キーボードから文字を入力する。
 
     /*
