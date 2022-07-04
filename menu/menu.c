@@ -126,9 +126,11 @@ void redrawMenu(){
   // overlay(menuPad, menuWin);
   // overwrite(menuPad, menuWin);
   for(i=0; i<screenHeight; ++i){
-    wmove(menuWin, i, menuWidth/2);
+    // wmove(menuWin, i, menuWidth/2);
+    wmove(menuWin, i, 0);
     waddstr(menuWin, "\u200B"); // ZERO WIDTH SPACE
   }
+  wmove(menuWin, 0, 0);
 
   int height=menuHeight-menuPadY;
   if(height>screenHeight) height=screenHeight;
@@ -371,8 +373,8 @@ int main(int argc, char *argv[ ]){
     fprintf(stderr, "Failed to create a menu window.\n");
     exit(1);
   }
-  // leaveok(menuWin, TRUE); // 物理カーソルの位置を元に戻さない。
-  leaveok(menuWin, FALSE); // 論理カーソルを物理カーソルの位置に戻す。
+  leaveok(menuWin, TRUE); // 物理カーソルの位置を元に戻さない。
+  // leaveok(menuWin, FALSE); // 論理カーソルを物理カーソルの位置に戻す。
   wbkgd(menuWin, COLOR_PAIR(1));
   // wvline(menuframe, 0, menuHeight);
   // wcolor_set(menu, 1, NULL);
