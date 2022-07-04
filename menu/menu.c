@@ -155,8 +155,10 @@ void loop(){
     for(i=0; i<len; ++i){
       switch(buf[i]){
       case 0x1B:
+        /*
         waddstr(consoleWin, "^[");
         break;
+        */
         switch(buf[i+1]){
         case 0x20:
         case 0x26:
