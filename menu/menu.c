@@ -199,8 +199,10 @@ void loop(){
         fsync(STDOUT_FILENO);
         break;
         */
+        /*
       case '\r':
         break;
+        */
       default:
         // if(buf[i] >= 0x20)
           waddch(consoleWin, buf[i]);
