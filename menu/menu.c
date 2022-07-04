@@ -191,9 +191,9 @@ void loop(){
         // for(++i; i<j; ++i) waddch(consoleWin, buf[i]);
         i=j-1;
         break;
+        /*
       case 0x07:
         break;
-        /*
         if(mvcur(-1, -1, consoleHeight-1, 0) == ERR)
           waddstr(consoleWin, "[ERR]");
         else waddstr(consoleWin, "[OK]");
@@ -476,8 +476,8 @@ int main(int argc, char *argv[ ]){
     else waddstr(consoleWin, "[OK]");
     */
     getyx(consoleWin, y, x);
-    // mvcur(-1, -1, y, x);
-    wprintw(consoleWin, "(%d,%d)", x, y);
+    mvcur(0, 0, y, x);
+    // wprintw(consoleWin, "(%d,%d)", x, y);
     ch=getch( ); // キーボードから文字を入力する。
 
     /*
