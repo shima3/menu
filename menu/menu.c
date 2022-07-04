@@ -345,8 +345,8 @@ int main(int argc, char *argv[ ]){
     KEY_F(n)		Value of function key n
     KEY_ENTER		enter/send key
   */
-  // leaveok(stdscr, TRUE); // 論理カーソルが物理カーソルの位置に移動する。
-  leaveok(stdscr, FALSE); // 物理カーソルの位置を元に戻す。
+  leaveok(stdscr, TRUE); // 論理カーソルが物理カーソルの位置に移動する。
+  // leaveok(stdscr, FALSE); // 物理カーソルの位置を元に戻す。
 
   start_color( ); // カラーを有効にする。
   pair_content(0, &foreground, &background);
@@ -371,8 +371,8 @@ int main(int argc, char *argv[ ]){
     fprintf(stderr, "Failed to create a menu window.\n");
     exit(1);
   }
-  // leaveok(menuWin, TRUE); // 物理カーソルの位置を元に戻さない。
-  leaveok(menuWin, FALSE); // 論理カーソルを物理カーソルの位置に戻す。
+  leaveok(menuWin, TRUE); // 物理カーソルの位置を元に戻さない。
+  // leaveok(menuWin, FALSE); // 論理カーソルを物理カーソルの位置に戻す。
   wbkgd(menuWin, COLOR_PAIR(1));
   // wvline(menuframe, 0, menuHeight);
   // wcolor_set(menu, 1, NULL);
@@ -395,8 +395,8 @@ int main(int argc, char *argv[ ]){
     fprintf(stderr, "Failed to create a console window.\n");
     exit(1);
   }
-  leaveok(consoleWin, TRUE);
-  // leaveok(consoleWin, FALSE); // 物理カーソルが論理カーソルの位置に戻る。
+  // leaveok(consoleWin, TRUE);
+  leaveok(consoleWin, FALSE); // 物理カーソルが論理カーソルの位置に戻る。
   wbkgd(consoleWin, COLOR_PAIR(2));
   scrollok(consoleWin, TRUE); // スクロールできるように設定する。
   // wprintw(logWin, "ログ\n");
