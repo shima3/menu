@@ -359,6 +359,8 @@ void consoleMode( ){
       return;
     case 'L'&0x1F:
       werase(consoleWin);
+      overwrite(consoleWin, stdscr);
+      touchwin(stdscr);
       refresh( );
       break;
     default:
