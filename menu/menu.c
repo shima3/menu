@@ -198,10 +198,11 @@ void loop(){
         break;
         */
       case '\r':
+        break;
+      case '\n':
         if(mvcur(-1, -1, consoleHeight-1, 0) == ERR)
           waddstr(consoleWin, "[ERR]");
         else waddstr(consoleWin, "[OK]");
-        break;
       default:
         // if(buf[i] >= 0x20)
           waddch(consoleWin, buf[i]);
