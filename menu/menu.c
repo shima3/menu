@@ -454,6 +454,12 @@ int main(int argc, char *argv[ ]){
     // wresize(consoleWin, consoleHeight, consoleWidth);
     redrawMenu();
 
+    getyx(consoleWin, y, x);
+    waddch(consoleWin, '.');
+    overwrite(consoleWin, stdscr);
+    touchwin(stdscr);
+    refresh( ); // 論理画面に変更がなかったとき、物理カーソルの位置が戻らないバグ？のた必要
+
     werase(commandWin);
     wmove(commandWin, 0, 0);
     wattrset(commandWin, COLOR_PAIR(1));
@@ -478,11 +484,6 @@ int main(int argc, char *argv[ ]){
       waddstr(consoleWin, "[ERR]");
     else waddstr(consoleWin, "[OK]");
     */
-    getyx(consoleWin, y, x);
-    waddch(consoleWin, '.');
-    overwrite(consoleWin, stdscr);
-    touchwin(stdscr);
-    refresh( ); // 論理画面に変更がなかったとき、物理カーソルの位置が戻らないバグ？のた必要
 
     wmove(consoleWin, y, x);
     wdelch(consoleWin);
