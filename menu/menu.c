@@ -473,8 +473,8 @@ int main(int argc, char *argv[ ]){
     refresh( ); // 論理画面に変更がなかったとき、物理カーソルの位置が戻らないバグ？のた必要
 
     redrawChoice();
-    // overwrite(consoleWin, stdscr);
     touchwin(consoleWin);
+    overwrite(consoleWin, stdscr);
     touchwin(stdscr);
     refresh( );
 
