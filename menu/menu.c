@@ -310,6 +310,10 @@ int menuMode(){
     // wprintw(consoleWin, "ch=%d, x=%d, y=%d, w=%d, h=%d\n", ch, x, y, screenWidth, screenHeight); // curses版のprintf
     // printf("ch=%d, x=%d, y=%d, w=%d, h=%d\r\n", ch, x, y, screenWidth, screenHeight); // curses版のprintf
     // touchwin(stdscr);
+
+    wmove(commandWin, 0, 0);
+    waddch(commandWin, ch);
+
     switch(ch){
     case KEY_UP:
       if(choiceY>0) --choiceY;
@@ -334,8 +338,6 @@ int menuMode(){
       fsync(fdm);
       break;
     case 0x1B: // escape key
-      wmove(commandWin, 0, 0);
-      waddstr(commandWin, "ESC ");
       redrawMenu( );
       overwrite(menuWin, stdscr);
       touchwin(stdscr);
