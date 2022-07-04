@@ -488,7 +488,7 @@ int main(int argc, char *argv[ ]){
     KEY_F(n)		Value of function key n
     KEY_ENTER		enter/send key
   */
-  leaveok(stdscr, TRUE); // 論理カーソルが物理カーソルの位置に移動する。
+  // leaveok(stdscr, TRUE); // 論理カーソルが物理カーソルの位置に移動する。
   // leaveok(stdscr, FALSE); // 物理カーソルの位置を元に戻す。
 
   start_color( ); // カラーを有効にする。
@@ -514,7 +514,7 @@ int main(int argc, char *argv[ ]){
     fprintf(stderr, "Failed to create a menu window.\n");
     exit(1);
   }
-  leaveok(menuWin, TRUE); // 物理カーソルの位置を元に戻さない。
+  // leaveok(menuWin, TRUE); // 物理カーソルの位置を元に戻さない。
   // leaveok(menuWin, FALSE); // 論理カーソルを物理カーソルの位置に戻す。
   wbkgd(menuWin, COLOR_PAIR(1));
   // wvline(menuframe, 0, menuHeight);
@@ -538,7 +538,7 @@ int main(int argc, char *argv[ ]){
     fprintf(stderr, "Failed to create a console window.\n");
     exit(1);
   }
-  leaveok(consoleWin, TRUE);
+  // leaveok(consoleWin, TRUE);
   // leaveok(consoleWin, FALSE); // 物理カーソルが論理カーソルの位置に戻る。
   // wbkgd(consoleWin, COLOR_PAIR(2));
   wbkgd(consoleWin, 0);
@@ -552,7 +552,7 @@ int main(int argc, char *argv[ ]){
     exit(1);
   }
   // wbkgd(commandWin, COLOR_PAIR(2));
-  leaveok(commandWin, TRUE); // 物理カーソルの位置を元に戻す。
+  // leaveok(commandWin, TRUE); // 物理カーソルの位置を元に戻す。
   // leaveok(commandWin, FALSE); // 物理カーソルの位置を元に戻す。
 
   // choiceWin=newwin(1, screenWidth, choiceY, 0);
@@ -564,7 +564,7 @@ int main(int argc, char *argv[ ]){
   }
   // wbkgd(choiceWin, COLOR_PAIR(1));
   wbkgd(choiceWin, COLOR_PAIR(2));
-  leaveok(choiceWin, TRUE); //  論理カーソルは物理カーソルの位置になる。
+  // leaveok(choiceWin, TRUE); //  論理カーソルは物理カーソルの位置になる。
   // leaveok(choiceWin, FALSE); // 物理カーソルの位置を元に戻す。
 
   // menuframe=newwin(menuHeight+1, menuWidth+1, 0, screenWidth-menuWidth-1); // ウィンドウを作成する。
