@@ -461,11 +461,12 @@ int main(int argc, char *argv[ ]){
     // refresh( ); // 論理画面に変更がなかったとき、物理カーソルの位置が戻らないバグ？のた必要
 
     redrawChoice();
+    touchwin(stdscr);
+    refresh( );
+
     if(mvcur(-1, -1, consoleHeight-1, 0) == ERR)
       waddstr(consoleWin, "[ERR]");
     else waddstr(consoleWin, "[OK]");
-    touchwin(stdscr);
-    refresh( );
     ch=getch( ); // キーボードから文字を入力する。
 
     /*
