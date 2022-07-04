@@ -444,8 +444,8 @@ int main(int argc, char *argv[ ]){
   printf("main 1\n");
   pid=fork( );
   if(pid==0){ // child
-    close(fdm);
     fds=open(ptsname(fdm), O_RDWR);
+    close(fdm);
     if(fds<0){
       perror("Error: open slave PTY");
       exit(1);
