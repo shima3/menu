@@ -130,7 +130,7 @@ void redrawMenu(){
     wmove(menuWin, i, 0);
     waddstr(menuWin, "\u200B"); // ZERO WIDTH SPACE
   }
-  // wmove(menuWin, 0, 0);
+  wmove(menuWin, 0, 0);
 
   int height=menuHeight-menuPadY;
   if(height>screenHeight) height=screenHeight;
