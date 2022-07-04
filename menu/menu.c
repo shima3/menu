@@ -479,9 +479,9 @@ int main(int argc, char *argv[ ]){
     if(mvcur(-1, -1, consoleHeight-1, 0) == ERR)
       waddstr(consoleWin, "[ERR]");
     else waddstr(consoleWin, "[OK]");
-    */
     overwrite(consoleWin, stdscr);
     refresh( );
+    */
     // getyx(consoleWin, y, x);
     // wprintw(consoleWin, "(%d,%d)", x, y);
     // mvcur(-1, -1, 0, 0);
