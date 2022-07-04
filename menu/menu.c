@@ -185,12 +185,10 @@ void loop(){
         default:
           j=i+4;
         }
-        /*
         if(write(STDOUT_FILENO, buf+i, j-i)<=0) break;
         fsync(STDOUT_FILENO);
         wprintw(consoleWin, "[%d]", j-i);
-        */
-        for(++i; i<j; ++i) waddch(consoleWin, buf[i]);
+        // for(++i; i<j; ++i) waddch(consoleWin, buf[i]);
         i=j-1;
         break;
         /*
