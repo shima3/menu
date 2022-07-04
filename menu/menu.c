@@ -458,11 +458,11 @@ int main(int argc, char *argv[ ]){
     overwrite(commandWin, stdscr);
 
     // overwrite(consoleWin, stdscr);
-    refresh( ); // 論理画面に変更がなかったとき、物理カーソルの位置が戻らないバグ？のた必要
+    // refresh( ); // 論理画面に変更がなかったとき、物理カーソルの位置が戻らないバグ？のた必要
 
     redrawChoice();
     touchwin(stdscr);
-    // refresh( );
+    refresh( );
     ch=getch( ); // キーボードから文字を入力する。
 
     /*
