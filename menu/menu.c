@@ -340,8 +340,8 @@ int main(int argc, char *argv[ ]){
     KEY_F(n)		Value of function key n
     KEY_ENTER		enter/send key
   */
-  // leaveok(stdscr, TRUE); // 物理カーソルの位置を元に戻さない。
-  leaveok(stdscr, FALSE); // 物理カーソルの位置を元に戻す。
+  leaveok(stdscr, TRUE); // 物理カーソルの位置を元に戻さない。
+  // leaveok(stdscr, FALSE); // 物理カーソルの位置を元に戻す。
 
   start_color( ); // カラーを有効にする。
   pair_content(0, &foreground, &background);
@@ -390,7 +390,7 @@ int main(int argc, char *argv[ ]){
     fprintf(stderr, "Failed to create a console window.\n");
     exit(1);
   }
-  leaveok(consoleWin, TRUE);
+  // leaveok(consoleWin, TRUE);
   // wbkgd(consoleWin, COLOR_PAIR(2));
   // scrollok(consoleWin, TRUE); // スクロールできるように設定する。
   // wprintw(logWin, "ログ\n");
