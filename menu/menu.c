@@ -156,17 +156,6 @@ void loop(){
       switch(buf[i]){
       case 0x1B:
         break;
-        /*
-        waddstr(consoleWin, "1B[");
-        waddch(consoleWin, buf[i+1]);
-        waddch(consoleWin, buf[i+2]);
-        waddch(consoleWin, buf[i+3]);
-        waddch(consoleWin, buf[i+4]);
-        waddch(consoleWin, buf[i+5]);
-        waddch(consoleWin, buf[i+6]);
-        waddch(consoleWin, buf[i+7]);
-        waddstr(consoleWin, "]");
-        */
         switch(buf[i+1]){
         case 0x20:
         case 0x26:
@@ -208,7 +197,8 @@ void loop(){
         break;
         */
       default:
-        waddch(consoleWin, buf[i]);
+        if(buf[i] >= 0x20)
+          waddch(consoleWin, buf[i]);
       }
     }
     overwrite(consoleWin, stdscr);
