@@ -213,6 +213,9 @@ void loop(){
     overwrite(consoleWin, stdscr);
     touchwin(stdscr);
     refresh();
+    if(mvcur(-1, -1, consoleHeight-1, 0) == ERR)
+      waddstr(consoleWin, "[ERR]");
+    else waddstr(consoleWin, "[OK]");
     /*
     if(read(fdm, buf, sizeof(buf))!=1) break;
     if(buf[0]==10) write(STDOUT_FILENO, "\r", 1);
@@ -464,9 +467,11 @@ int main(int argc, char *argv[ ]){
     touchwin(stdscr);
     refresh( );
 
+    /*
     if(mvcur(-1, -1, consoleHeight-1, 0) == ERR)
       waddstr(consoleWin, "[ERR]");
     else waddstr(consoleWin, "[OK]");
+    */
     ch=getch( ); // キーボードから文字を入力する。
 
     /*
