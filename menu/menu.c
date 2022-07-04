@@ -130,7 +130,7 @@ void redrawMenu(){
     wmove(menuWin, i, 0);
     waddstr(menuWin, "\u200B"); // ZERO WIDTH SPACE
   }
-  wmove(menuWin, 0, 0);
+  // wmove(menuWin, 0, 0);
 
   int height=menuHeight-menuPadY;
   if(height>screenHeight) height=screenHeight;
@@ -422,8 +422,8 @@ int main(int argc, char *argv[ ]){
   }
   // wbkgd(choiceWin, COLOR_PAIR(1));
   wbkgd(choiceWin, COLOR_PAIR(2));
-  // leaveok(choiceWin, TRUE); //  論理カーソルは物理カーソルの位置になる。
-  leaveok(choiceWin, TRUE); // 物理カーソルの位置を元に戻す。
+  leaveok(choiceWin, TRUE); //  論理カーソルは物理カーソルの位置になる。
+  // leaveok(choiceWin, FALSE); // 物理カーソルの位置を元に戻す。
 
   // menuframe=newwin(menuHeight+1, menuWidth+1, 0, screenWidth-menuWidth-1); // ウィンドウを作成する。
   // wcolor_set(menuframe, COLOR_PAIR(1), NULL);
@@ -470,7 +470,7 @@ int main(int argc, char *argv[ ]){
     refresh( ); // 論理画面に変更がなかったとき、物理カーソルの位置が戻らないバグ？のた必要
 
     redrawChoice();
-    // overwrite(consoleWin, stdscr);
+    overwrite(consoleWin, stdscr);
     touchwin(stdscr);
     refresh( );
 
