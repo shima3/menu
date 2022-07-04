@@ -311,9 +311,8 @@ int menuMode(){
     // printf("ch=%d, x=%d, y=%d, w=%d, h=%d\r\n", ch, x, y, screenWidth, screenHeight); // curses版のprintf
     // touchwin(stdscr);
 
-    wmove(commandWin, 0, 0);
-    waddch(commandWin, ch);
-    refresh( );
+    wmove(consoleWin, 0, 0);
+    waddch(consoleWin, ch);
 
     switch(ch){
     case KEY_UP:
