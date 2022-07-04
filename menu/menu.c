@@ -471,7 +471,6 @@ int main(int argc, char *argv[ ]){
     overwrite(commandWin, stdscr);
 
     redrawChoice();
-    refresh( ); // 論理画面に変更がなかったとき、物理カーソルの位置が戻らないバグ？のた必要
 
     // touchwin(consoleWin);
     /*
@@ -481,6 +480,8 @@ int main(int argc, char *argv[ ]){
     */
     getyx(consoleWin, y, x);
     waddch(consoleWin, '.');
+    overwrite(consoleWin, stdscr);
+    refresh( ); // 論理画面に変更がなかったとき、物理カーソルの位置が戻らないバグ？のた必要
     wmove(consoleWin, y, x);
     wdelch(consoleWin);
     overwrite(consoleWin, stdscr);
