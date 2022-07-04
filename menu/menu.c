@@ -192,9 +192,11 @@ void loop(){
         i=j-1;
         break;
       case 0x07:
+        /*
         if(mvcur(-1, -1, consoleHeight-1, 0) == ERR)
           waddstr(consoleWin, "[ERR]");
         else waddstr(consoleWin, "[OK]");
+        */
         break;
         /*
         if(write(STDOUT_FILENO, buf+i, 1)<=0) break;
