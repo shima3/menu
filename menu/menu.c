@@ -146,7 +146,7 @@ void redrawChoice(){
 
 void loop(){
   char buf[256];
-  int len, i, j;
+  int len, i, j, x, y;
 
   // buf[0]=13; // carriage return
   for(;;){
@@ -216,6 +216,8 @@ void loop(){
       }
     }
     overwrite(consoleWin, stdscr);
+    getyx(consoleWin, y, x);
+    mvcur(-1, -1, y, x);
     touchwin(stdscr);
     refresh();
     /*
