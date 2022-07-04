@@ -252,7 +252,7 @@ int menuMode(){
     consoleWidth=screenWidth-menuWidth;
     consoleHeight=screenHeight-commandHeight;
     // wresize(consoleWin, consoleHeight, consoleWidth);
-    redrawMenu();
+    redrawMenu( );
     
     /*
       getyx(consoleWin, y, x);
@@ -334,7 +334,9 @@ int menuMode(){
       fsync(fdm);
       break;
     case 0x1B: // escape key
-      redrawMenu();
+      wmove(commandWin, 0, 0);
+      waddstr(commandWin, "ESC ");
+      redrawMenu( );
       overwrite(menuWin, stdscr);
       touchwin(stdscr);
       refresh( );
