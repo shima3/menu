@@ -334,6 +334,7 @@ int menuMode(){
       fsync(fdm);
       break;
     case 0x1B: // escape key
+      redrawMenu();
       overwrite(menuWin, stdscr);
       touchwin(stdscr);
       refresh( );
