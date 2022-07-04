@@ -437,7 +437,7 @@ int main(int argc, char *argv[ ]){
 
   // write(fdm, "top\n", 4); fsync(fdm);
   // strcpy(buf, "nano makefile\n"); write(fdm, buf, strlen(buf)); fsync(fdm);
-  strcpy(buf, "export PS1=\"\\r\\r$ \"\n"); write(fdm, buf, strlen(buf));
+  strcpy(buf, "export PS1=\"$ \\r\\r\"\n"); write(fdm, buf, strlen(buf));
   // strcpy(buf, "echo $PS1\n"); write(fdm, buf, strlen(buf));
   fsync(fdm);
   for(;;){
