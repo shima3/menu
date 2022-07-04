@@ -146,7 +146,7 @@ void redrawChoice(){
 
 void loop(){
   char buf[256];
-  int len, i, j, x, y;
+  int len, i, j;
 
   // buf[0]=13; // carriage return
   for(;;){
@@ -216,8 +216,6 @@ void loop(){
       }
     }
     overwrite(consoleWin, stdscr);
-    getyx(consoleWin, y, x);
-    mvcur(-1, -1, y, x);
     touchwin(stdscr);
     refresh();
     /*
@@ -477,6 +475,8 @@ int main(int argc, char *argv[ ]){
       waddstr(consoleWin, "[ERR]");
     else waddstr(consoleWin, "[OK]");
     */
+    getyx(consoleWin, y, x);
+    mvcur(-1, -1, y, x);
     ch=getch( ); // キーボードから文字を入力する。
 
     /*
