@@ -366,8 +366,8 @@ int main(int argc, char *argv[ ]){
     fprintf(stderr, "Failed to create a menu window.\n");
     exit(1);
   }
-  leaveok(menuWin, TRUE); // 物理カーソルの位置を元に戻さない。
-  // leaveok(menuWin, FALSE); // 物理カーソルの位置を元に戻す。
+  // leaveok(menuWin, TRUE); // 物理カーソルの位置を元に戻さない。
+  leaveok(menuWin, FALSE); // 物理カーソルの位置を元に戻す。
   wbkgd(menuWin, COLOR_PAIR(1));
   // wvline(menuframe, 0, menuHeight);
   // wcolor_set(menu, 1, NULL);
