@@ -489,7 +489,7 @@ int main(int argc, char *argv[ ]){
 
     getyx(consoleWin, y, x);
     waddch(consoleWin, '*');
-    // wmove(consoleWin, y, x);
+    wmove(consoleWin, y, x);
     // wdelch(consoleWin);
     overwrite(consoleWin, stdscr);
     // wprintw(consoleWin, "(%d,%d)", x, y);
