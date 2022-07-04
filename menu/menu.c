@@ -367,7 +367,7 @@ int main(int argc, char *argv[ ]){
     exit(1);
   }
   // leaveok(menuWin, TRUE); // 物理カーソルの位置を元に戻さない。
-  // leaveok(menuWin, FALSE); // 物理カーソルの位置を元に戻す。
+  leaveok(menuWin, FALSE); // 物理カーソルの位置を元に戻す。
   wbkgd(menuWin, COLOR_PAIR(1));
   // wvline(menuframe, 0, menuHeight);
   // wcolor_set(menu, 1, NULL);
@@ -390,7 +390,8 @@ int main(int argc, char *argv[ ]){
     fprintf(stderr, "Failed to create a console window.\n");
     exit(1);
   }
-  leaveok(consoleWin, FALSE);
+  leaveok(consoleWin, TRUE);
+  // leaveok(consoleWin, FALSE);
   wbkgd(consoleWin, COLOR_PAIR(2));
   scrollok(consoleWin, TRUE); // スクロールできるように設定する。
   // wprintw(logWin, "ログ\n");
