@@ -335,6 +335,8 @@ int menuMode(){
       break;
     case 0x1B: // escape key
       overwrite(menuWin, stdscr);
+      touchwin(stdscr);
+      refresh( );
       return TRUE;
     default:
       for(i=0; i<menuHeight; ++i){
