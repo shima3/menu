@@ -126,8 +126,8 @@ void redrawMenu(){
   // overlay(menuPad, menuWin);
   // overwrite(menuPad, menuWin);
   for(i=0; i<screenHeight; ++i){
-    wmove(menuWin, i, menuWidth/2);
-    // wmove(menuWin, i, 0);
+    // wmove(menuWin, i, menuWidth/2);
+    wmove(menuWin, i, 0);
     waddstr(menuWin, "\u200B"); // ZERO WIDTH SPACE
   }
 
