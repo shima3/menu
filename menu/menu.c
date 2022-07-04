@@ -489,15 +489,17 @@ int main(int argc, char *argv[ ]){
     else waddstr(consoleWin, "[OK]");
     */
 
+    /*
     getyx(consoleWin, y, x);
     waddch(consoleWin, '_');
     wmove(consoleWin, y, x);
     // wdelch(consoleWin);
     overwrite(consoleWin, stdscr);
     // wprintw(consoleWin, "(%d,%d)", x, y);
+    */
+
     touchwin(stdscr);
     refresh( );
-    
     ch=getch( ); // キーボードから文字を入力する。
 
     /*
