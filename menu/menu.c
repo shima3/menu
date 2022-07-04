@@ -461,7 +461,7 @@ int main(int argc, char *argv[ ]){
     refresh( ); // 論理画面に変更がなかったとき、物理カーソルの位置が戻らないバグ？のた必要
 
     redrawChoice();
-    touchwin(stdscr);
+    // touchwin(stdscr);
     refresh( );
     ch=getch( ); // キーボードから文字を入力する。
 
