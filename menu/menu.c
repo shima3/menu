@@ -199,10 +199,6 @@ void loop(){
         */
       case '\r':
         break;
-      case '\n':
-        if(mvcur(-1, -1, consoleHeight-1, 0) == ERR)
-          waddstr(consoleWin, "[ERR]");
-        else waddstr(consoleWin, "[OK]");
       default:
         // if(buf[i] >= 0x20)
           waddch(consoleWin, buf[i]);
@@ -216,6 +212,9 @@ void loop(){
     }
     overwrite(consoleWin, stdscr);
     touchwin(stdscr);
+        if(mvcur(-1, -1, consoleHeight-1, 0) == ERR)
+          waddstr(consoleWin, "[ERR]");
+        else waddstr(consoleWin, "[OK]");
     refresh();
     /*
     if(read(fdm, buf, sizeof(buf))!=1) break;
