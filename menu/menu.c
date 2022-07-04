@@ -221,7 +221,7 @@ void loop(){
     getyx(consoleWin, y, x);
     wattrset(consoleWin, COLOR_PAIR(1));
     waddch(consoleWin, ' ');
-    wattrset(consoleWin, COLOR_PAIR(2));
+    wattrset(consoleWin, 0);
     wmove(consoleWin, y, x);
     overwrite(consoleWin, stdscr);
     touchwin(stdscr);
@@ -407,7 +407,8 @@ int main(int argc, char *argv[ ]){
   }
   leaveok(consoleWin, TRUE);
   // leaveok(consoleWin, FALSE); // 物理カーソルが論理カーソルの位置に戻る。
-  wbkgd(consoleWin, COLOR_PAIR(2));
+  // wbkgd(consoleWin, COLOR_PAIR(2));
+  wbkgd(consoleWin, 0);
   scrollok(consoleWin, TRUE); // スクロールできるように設定する。
   // wprintw(logWin, "ログ\n");
 
