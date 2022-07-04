@@ -481,7 +481,9 @@ int main(int argc, char *argv[ ]){
     getyx(consoleWin, y, x);
     waddch(consoleWin, '.');
     overwrite(consoleWin, stdscr);
+    touchwin(stdscr);
     refresh( ); // 論理画面に変更がなかったとき、物理カーソルの位置が戻らないバグ？のた必要
+
     wmove(consoleWin, y, x);
     wdelch(consoleWin);
     overwrite(consoleWin, stdscr);
@@ -490,6 +492,7 @@ int main(int argc, char *argv[ ]){
     // mvcur(0, 0, y, x);
     touchwin(stdscr);
     refresh( );
+    
     ch=getch( ); // キーボードから文字を入力する。
 
     /*
