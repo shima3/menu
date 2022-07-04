@@ -135,7 +135,6 @@ void redrawMenu(){
   if(height>screenHeight) height=screenHeight;
   copywin(menuPad, menuWin, menuPadY, menuPadX, 0, 0, height-1, menuWidth-1, FALSE);
   // copywin(menuPad, menuWin, 0, 0, 0, 0, screenHeight, menuWidth, TRUE);
-  wmove(menuWin, 0, 0);
 }
 
 void redrawChoice(){
