@@ -456,7 +456,7 @@ int main(int argc, char *argv[ ]){
 
     werase(commandWin);
     wmove(commandWin, 0, 0);
-    wattrset(commandWin, COLOR_PAIR(1));
+    // wattrset(commandWin, COLOR_PAIR(1));
     waddstr(commandWin, menuItems[choiceY].title);
     for(;;){
       getyx(commandWin, y, x);
@@ -464,7 +464,7 @@ int main(int argc, char *argv[ ]){
       waddch(commandWin, ' ');
     }
     // waddch(commandWin, '\n');
-    wattrset(commandWin, 0);
+    // wattrset(commandWin, 0);
     waddstr(commandWin, menuItems[choiceY].command);
     overwrite(commandWin, stdscr);
 
