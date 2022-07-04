@@ -454,11 +454,13 @@ int main(int argc, char *argv[ ]){
     // wresize(consoleWin, consoleHeight, consoleWidth);
     redrawMenu();
 
+    /*
     getyx(consoleWin, y, x);
     waddch(consoleWin, '.');
     overwrite(consoleWin, stdscr);
     touchwin(stdscr);
     refresh( ); // 論理画面に変更がなかったとき、物理カーソルの位置が戻らないバグ？のた必要
+    */
 
     werase(commandWin);
     wmove(commandWin, 0, 0);
@@ -485,8 +487,10 @@ int main(int argc, char *argv[ ]){
     else waddstr(consoleWin, "[OK]");
     */
 
+    getyx(consoleWin, y, x);
+    waddch(consoleWin, '_');
     wmove(consoleWin, y, x);
-    wdelch(consoleWin);
+    // wdelch(consoleWin);
     overwrite(consoleWin, stdscr);
     // wprintw(consoleWin, "(%d,%d)", x, y);
     // mvcur(-1, -1, 0, 0);
