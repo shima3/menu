@@ -367,7 +367,7 @@ int main(int argc, char *argv[ ]){
     exit(1);
   }
   // leaveok(menuWin, TRUE); // 物理カーソルの位置を元に戻さない。
-  leaveok(menuWin, FALSE); // 物理カーソルの位置を元に戻す。
+  // leaveok(menuWin, FALSE); // 物理カーソルの位置を元に戻す。
   wbkgd(menuWin, COLOR_PAIR(1));
   // wvline(menuframe, 0, menuHeight);
   // wcolor_set(menu, 1, NULL);
@@ -441,7 +441,6 @@ int main(int argc, char *argv[ ]){
     consoleHeight=screenHeight-commandHeight;
     // wresize(consoleWin, consoleHeight, consoleWidth);
     redrawMenu();
-    overwrite(consoleWin, stdscr);
 
     werase(commandWin);
     wmove(commandWin, 0, 0);
@@ -456,9 +455,11 @@ int main(int argc, char *argv[ ]){
     wattrset(commandWin, 0);
     waddstr(commandWin, menuItems[choiceY].command);
     overwrite(commandWin, stdscr);
-    refresh( ); // 論理画面に変更がなかったとき、物理カーソルの位置を戻らないバグ？のた必要
+
+    refresh( ); // 論理画面に変更がなかったとき、物理カーソルの位置が戻らないバグ？のた必要
 
     redrawChoice();
+    overwrite(consoleWin, stdscr);
     touchwin(stdscr);
     refresh( );
     ch=getch( ); // キーボードから文字を入力する。
