@@ -3,8 +3,8 @@
 TARGETS=menu console
 
 all: $(TARGETS)
-	git checkout -B compile
 	git commit -am "Successful compilation" -uno
+#	git checkout -B compile
 #	- git branch --quiet compile
 #	git checkout compile
 #	git commit --all "--message=Successful compilation" --untracked-files=no
@@ -18,9 +18,7 @@ console: console.c
 	cc console.c -lpthread -o console
 
 merge:
-	git checkout master
-	git merge --squash compile
-	git commit --all --untracked-files=no
+	bash ./merge.sh
 
 up: export LC_ALL := C
 up:
