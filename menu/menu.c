@@ -220,9 +220,11 @@ void consoleOutput(){
         if(write(STDOUT_FILENO, buf+i, 1)<=0) break;
         fsync(STDOUT_FILENO);
       */
+      /*
     case '\r':
       ++i;
       break;
+      */
     default:
       if(buf[i]&0x80){
         for(j=i+1; j<len; ++j)
