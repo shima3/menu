@@ -228,6 +228,7 @@ void consoleOutput(){
         for(j=i+1; j<len; ++j)
           if(buf[j]&0x80==0) break;
         waddnstr(consoleWin, buf, j-i);
+        i=j;
       }else waddch(consoleWin, buf[i++]);
     }
   }
