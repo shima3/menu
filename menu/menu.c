@@ -154,93 +154,89 @@ void redrawChoice(){
 }
 
 void consoleOutput(){
-  char buf[256];
-  int len, i, j, x, y;
+  char buf[1024];
+  int len=0, i=0, j, x, y;
 
   // buf[0]=13; // carriage return
   for(;;){
-    len=read(fdm, buf, sizeof(buf));
-    if(len<=0) break;
-    for(i=0; i<len; ++i){
-      switch(buf[i]){
-      case 0x1B:
-        /*
-        waddstr(consoleWin, "^[");
+    if(i>=len){
+      getyx(consoleWin, y, x);
+      wattrset(consoleWin, COLOR_PAIR(1));
+      waddch(consoleWin, ' ');
+      wattrset(consoleWin, 0);
+      wmove(consoleWin, y, x);
+      overwrite(consoleWin, stdscr);
+      touchwin(stdscr);
+      refresh();
+      
+      len=read(fdm, buf, sizeof(buf));
+      if(len<=0) break;
+      i=0;
+    }
+    switch(buf[i]){
+    case 0x1B:
+      switch(buf[i+1]){
+      case 0x20:
+      case 0x26:
+        j=i+3;
         break;
-        */
-        switch(buf[i+1]){
-        case 0x20:
-        case 0x26:
-          j=i+3;
-          break;
-        case '[': // 0x5B CSI
-          j=i+2;
-          if(buf[j] == '>') ++j;
-          for(; j<len; ++j)
-            if(buf[j] < '0' || buf[j] > '9') break;
-          if(buf[j++] != ';') break;
-          for(; j<len; ++j)
-            if(buf[j] < '0' || buf[j] > '9') break;
-          ++j;
-          break;
-        case ']': // 0x5D OSC
-          for(j=i+2; j<len; ++j){
-            if(buf[j] == 0x07){
-              ++j;
-              break;
-            }
+      case '[': // 0x5B CSI
+        j=i+2;
+        if(buf[j] == '>') ++j;
+        for(; j<len; ++j)
+          if(buf[j] < '0' || buf[j] > '9') break;
+        if(buf[j++] != ';') break;
+        for(; j<len; ++j)
+          if(buf[j] < '0' || buf[j] > '9') break;
+        ++j;
+        break;
+      case ']': // 0x5D OSC
+        for(j=i+2; j<len; ++j){
+          if(buf[j] == 0x07){
+            ++j;
+            break;
           }
-          break;
-        default:
-          j=i+4;
         }
-        /*
-        if(write(STDOUT_FILENO, buf+i, j-i)<=0) break;
-        fsync(STDOUT_FILENO);
-        */
-        // wprintw(consoleWin, "[%d]", j-i);
-        // for(++i; i<j; ++i) waddch(consoleWin, buf[i]);
-        i=j-1;
-        break;
-        /*
-      case 0x07:
-        break;
-        if(mvcur(-1, -1, consoleHeight-1, 0) == ERR)
-          waddstr(consoleWin, "[ERR]");
-        else waddstr(consoleWin, "[OK]");
-        */
-        /*
-        if(write(STDOUT_FILENO, buf+i, 1)<=0) break;
-        fsync(STDOUT_FILENO);
-        */
-      case '\r':
         break;
       default:
-        // if(buf[i] >= 0x20)
-          waddch(consoleWin, buf[i]);
-          /*
-        else{
-          waddch(consoleWin, '^');
-          waddch(consoleWin, buf[i]+0x40);
-        }
-          */
+        j=i+4;
       }
+      /*
+        if(write(STDOUT_FILENO, buf+i, j-i)<=0) break;
+        fsync(STDOUT_FILENO);
+      */
+      // wprintw(consoleWin, "[%d]", j-i);
+      // for(++i; i<j; ++i) waddch(consoleWin, buf[i]);
+      i=j;
+      break;
+      /*
+        case 0x07:
+        break;
+        if(mvcur(-1, -1, consoleHeight-1, 0) == ERR)
+        waddstr(consoleWin, "[ERR]");
+        else waddstr(consoleWin, "[OK]");
+      */
+      /*
+        if(write(STDOUT_FILENO, buf+i, 1)<=0) break;
+        fsync(STDOUT_FILENO);
+      */
+    case '\r':
+      ++i;
+      break;
+    default:
+      if(buf[i]&0x80){
+        for(j=i+1; j<len; ++j)
+          if(buf[j]&0x80==0) break;
+        waddnstr(consoleWin, buf, j-i);
+      }else waddch(consoleWin, buf[i++]);
     }
-    getyx(consoleWin, y, x);
-    wattrset(consoleWin, COLOR_PAIR(1));
-    waddch(consoleWin, ' ');
-    wattrset(consoleWin, 0);
-    wmove(consoleWin, y, x);
-    overwrite(consoleWin, stdscr);
-    touchwin(stdscr);
-    refresh();
-    /*
+  }
+  /*
     if(read(fdm, buf, sizeof(buf))!=1) break;
     if(buf[0]==10) write(STDOUT_FILENO, "\r", 1);
     if(write(STDOUT_FILENO, buf, len)!=len) break;
     fsync(STDOUT_FILENO);
-    */
-  }
+  */
   childDie=TRUE;
 }
 
