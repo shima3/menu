@@ -166,11 +166,12 @@ void consoleOutput(){
       wattrset(consoleWin, 0);
       wmove(consoleWin, y, x);
       overwrite(consoleWin, stdscr);
-      touchwin(stdscr);
-      refresh();
+      refresh( );
       
       len=read(masterFD, buf, sizeof(buf));
       if(len<=0) break;
+      waddch(consoleWin, ' ');
+      wmove(consoleWin, y, x);
       i=0;
     }
     switch(buf[i]){
@@ -201,6 +202,7 @@ void consoleOutput(){
       default:
         j=i+4;
       }
+      // waddnstr(consoleWin, buf+i, j-i); // エスケープシーケンス表示
       /*
         if(write(STDOUT_FILENO, buf+i, j-i)<=0) break;
         fsync(STDOUT_FILENO);
@@ -209,31 +211,27 @@ void consoleOutput(){
       // for(++i; i<j; ++i) waddch(consoleWin, buf[i]);
       i=j;
       break;
-      /*
-        case 0x07:
-        break;
-        if(mvcur(-1, -1, consoleHeight-1, 0) == ERR)
-        waddstr(consoleWin, "[ERR]");
-        else waddstr(consoleWin, "[OK]");
-      */
-      /*
-        if(write(STDOUT_FILENO, buf+i, 1)<=0) break;
-        fsync(STDOUT_FILENO);
-      */
     case '\r':
-      /*
-      getyx(consoleWin, y, x);
-      wmove(consoleWin, y, 0);
-      */
       ++i;
       break;
     default:
-      if(buf[i]&0x80){
-        for(j=i+1; j<len; ++j)
-          if(buf[j]&0x80==0) break;
-        waddnstr(consoleWin, buf, j-i);
-        i=j;
-      }else waddch(consoleWin, buf[i++]);
+      switch(buf[i]&0xF0){
+      case 0xC0:
+      case 0xD0:
+        j=i+2;
+        break;
+      case 0xE0:
+        j=i+3;
+        break;
+      case 0xF0:
+        j=i+4;
+        break;
+      default:
+        j=i+1;
+      }
+      waddnstr(consoleWin, buf+i, j-i);
+      i=j;
+      // wprintw(consoleWin, "(%02x)", buf[i++]&0xFF);
     }
   }
   /*
@@ -246,7 +244,7 @@ void consoleOutput(){
 }
 
 int menuMode(){
-  int ch, i;
+  int ch, i, x, y;
   char buf[1024];
 
   for(;;){
@@ -315,10 +313,14 @@ int menuMode(){
     // printf("ch=%d, x=%d, y=%d, w=%d, h=%d\r\n", ch, x, y, screenWidth, screenHeight); // curses版のprintf
     // touchwin(stdscr);
 
+    /*
+    getyx(consoleWin, y, x);
     wmove(consoleWin, 0, 0);
-    wprintw(consoleWin, "(%c)", ch);
+    wprintw(consoleWin, "(%d)", ch);
+    wmove(consoleWin, y, x);
     overwrite(consoleWin, stdscr);
     refresh( );
+    */
 
     switch(ch){
     case KEY_UP:
