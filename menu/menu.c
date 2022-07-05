@@ -19,6 +19,8 @@
   https://docs.oracle.com/cd/E86824_01/html/E54767/copywin-3curses.html
   - JIS X 0202:1998 (ISO/IEC 2022:1994)
   https://kikakurui.com/x0/X0202-1998-01.html
+  - 2.7 対応している制御コード一覧
+  https://kmiya-culti.github.io/RLogin/ctrlcode.html
   
   Bugs:
   - 背景色を変更したウィンドウが右端にあると左側のウィンドウの空行も同じ背景色になる。
@@ -155,24 +157,27 @@ void redrawChoice(){
 
 void consoleOutput(){
   char buf[1024];
-  int len=0, i=0, j, x, y;
+  int len=0, i=0, j, x, y, ch, n, x2;
 
   // buf[0]=13; // carriage return
   for(;;){
     if(i>=len){
       getyx(consoleWin, y, x);
       wattrset(consoleWin, COLOR_PAIR(1));
-      waddch(consoleWin, ' ');
-      wattrset(consoleWin, 0);
-      wmove(consoleWin, y, x);
+      ch = winch(consoleWin);
+      waddch(consoleWin, ch);
       overwrite(consoleWin, stdscr);
       refresh( );
-      
+      wattrset(consoleWin, 0);
+      wmove(consoleWin, y, x);
       len=read(masterFD, buf, sizeof(buf));
       if(len<=0) break;
-      waddch(consoleWin, ' ');
-      wmove(consoleWin, y, x);
       i=0;
+      // getyx(consoleWin, y, x);
+      // ch = winch(consoleWin);
+      wmove(consoleWin, y, x);
+      waddch(consoleWin, ch);
+      wmove(consoleWin, y, x);
     }
     switch(buf[i]){
     case 0x1B:
@@ -184,11 +189,56 @@ void consoleOutput(){
       case '[': // 0x5B CSI
         j=i+2;
         if(buf[j] == '>') ++j;
-        for(; j<len; ++j)
+        n=0;
+        for(; j<len; ++j){
           if(buf[j] < '0' || buf[j] > '9') break;
-        if(buf[j++] != ';') break;
-        for(; j<len; ++j)
-          if(buf[j] < '0' || buf[j] > '9') break;
+          n = 10*n+buf[j]-'0';
+        }
+        switch(buf[j]){
+        case 'C':
+          getyx(consoleWin, y, x);
+          if(n == 0) n=1;
+          wmove(consoleWin, y, x+n);
+          break;
+        case 'K':
+          getyx(consoleWin, y, x);
+          switch(n){
+          case 1:
+            wmove(consoleWin, y, 0);
+            for(n = 0; n < x; ++n)
+              waddch(consoleWin, ' ');
+            break;
+          case 2:
+            wmove(consoleWin, y, 0);
+            for(n = 0; n < consoleWidth; ++n)
+              waddch(consoleWin, ' ');
+            break;
+          default:
+            for(n = x; n < consoleWidth; ++n)
+              waddch(consoleWin, ' ');
+          }
+          wmove(consoleWin, y, x);
+          break;
+        case 'P':
+          getyx(consoleWin, y, x);
+          // if(n == 0) n=1;
+          do wdelch(consoleWin); while(--n>0);
+          /*
+          for(x2 = x+n; x2 < consoleWidth; ++x2){
+            wmove(consoleWin, y, x2);
+            ch = winch(consoleWin);
+            wmove(consoleWin, y, x2-n);
+            waddch(consoleWin, ch);
+          }
+          while(--n >= 0)
+            waddch(consoleWin, ' ');
+          */
+          wmove(consoleWin, y, x);
+          break;
+        case ';':
+          while(++j<len)
+            if(buf[j] < '0' || buf[j] > '9') break;
+        }
         ++j;
         break;
       case ']': // 0x5D OSC
@@ -202,16 +252,25 @@ void consoleOutput(){
       default:
         j=i+4;
       }
-      // waddnstr(consoleWin, buf+i, j-i); // エスケープシーケンス表示
       /*
-        if(write(STDOUT_FILENO, buf+i, j-i)<=0) break;
-        fsync(STDOUT_FILENO);
+      waddnstr(consoleWin, buf+i, j-i);
+      waddnstr(commandWin, buf+i, j-i); // エスケープシーケンス表示
+      overwrite(commandWin, stdscr);
+      refresh( );
+
+      if(write(STDOUT_FILENO, buf+i, j-i)<=0) break;
+      fsync(STDOUT_FILENO);
       */
       // wprintw(consoleWin, "[%d]", j-i);
       // for(++i; i<j; ++i) waddch(consoleWin, buf[i]);
       i=j;
       break;
     case '\r':
+      ++i;
+      break;
+    case 'G'&0x1F:
+      if(write(STDOUT_FILENO, buf+i, 1)<=0) break;
+      fsync(STDOUT_FILENO);
       ++i;
       break;
     default:
@@ -363,11 +422,11 @@ int menuMode(){
 }
 
 void consoleMode( ){
-  int ch;
+  int buf[1];
 
   for(;;){
-    ch=getch( );
-    switch(ch){
+    buf[0]=getch( );
+    switch(buf[0]){
     case 0x1B:
       return;
     case 'L'&0x1F:
@@ -376,8 +435,28 @@ void consoleMode( ){
       touchwin(stdscr);
       refresh( );
       break;
+    case KEY_UP:
+      buf[0]='P'&0x1F;
+      write(masterFD, buf, 1);
+      fsync(masterFD);
+      break;
+    case KEY_DOWN:
+      buf[0]='N'&0x1F;
+      write(masterFD, buf, 1);
+      fsync(masterFD);
+      break;
+    case KEY_LEFT:
+      buf[0]='B'&0x1F;
+      write(masterFD, buf, 1);
+      fsync(masterFD);
+      break;
+    case KEY_RIGHT:
+      buf[0]='F'&0x1F;
+      write(masterFD, buf, 1);
+      fsync(masterFD);
+      break;
     default:
-      write(masterFD, &ch, 1);
+      write(masterFD, buf, 1);
       fsync(masterFD);
     }
   }
@@ -564,6 +643,7 @@ int main(int argc, char *argv[ ]){
     fprintf(stderr, "Failed to create a command window.\n");
     exit(1);
   }
+  scrollok(commandWin, TRUE); // スクロールできるように設定する。
   // wbkgd(commandWin, COLOR_PAIR(2));
   // leaveok(commandWin, TRUE); // 物理カーソルの位置を元に戻す。
   // leaveok(commandWin, FALSE); // 物理カーソルの位置を元に戻す。
