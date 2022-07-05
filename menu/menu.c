@@ -98,7 +98,7 @@ MenuItem menuItems[ ]={
 };
 int choiceY=0;
 int childDie=FALSE;
-int masterFD, fds;
+int masterFD, slaveFD;
 
 void makeMenuPad(){
   int i;
@@ -460,9 +460,9 @@ int main(int argc, char *argv[ ]){
   printf("main 1\n");
   pid=fork( );
   if(pid==0){ // child
-    fds=open(ptsname(masterFD), O_RDWR);
+    slaveFD=open(ptsname(masterFD), O_RDWR);
     close(masterFD);
-    if(fds<0){
+    if(slaveFD<0){
       perror("Error: open slave PTY");
       exit(1);
     }
@@ -471,13 +471,13 @@ int main(int argc, char *argv[ ]){
     ws=ws0;
     ws.ws_col=consoleWidth;
     ws.ws_row=consoleHeight;
-    if(ioctl(fds, TIOCSWINSZ, &ws)==-1) // ウィンドウサイズを設定する。
+    if(ioctl(slaveFD, TIOCSWINSZ, &ws)==-1) // ウィンドウサイズを設定する。
       perror("ioctl");
     // tcsetattr(fds, TCSANOW, &term);
-    dup2(fds, STDIN_FILENO);
-    dup2(fds, STDOUT_FILENO);
-    dup2(fds, STDERR_FILENO);
-    close(fds);
+    dup2(slaveFD, STDIN_FILENO);
+    dup2(slaveFD, STDOUT_FILENO);
+    dup2(slaveFD, STDERR_FILENO);
+    close(slaveFD);
     // ioctl(STDIN_FILENO, TIOCSCTTY, 1);
     // setenv("PS1", "\r\n$ ", 1);
     execvp(argv2[0], argv2);
