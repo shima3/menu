@@ -98,7 +98,7 @@ MenuItem menuItems[ ]={
 };
 int choiceY=0;
 int childDie=FALSE;
-int fdm, fds;
+int masterFD, fds;
 
 void makeMenuPad(){
   int i;
@@ -169,7 +169,7 @@ void consoleOutput(){
       touchwin(stdscr);
       refresh();
       
-      len=read(fdm, buf, sizeof(buf));
+      len=read(masterFD, buf, sizeof(buf));
       if(len<=0) break;
       i=0;
     }
@@ -340,8 +340,8 @@ int menuMode(){
         return FALSE;
       strcpy(buf, menuItems[choiceY].command);
       strcat(buf, "\n");
-      write(fdm, buf, strlen(buf));
-      fsync(fdm);
+      write(masterFD, buf, strlen(buf));
+      fsync(masterFD);
       break;
     case 0x1B: // escape key
       redrawMenu( );
@@ -375,8 +375,8 @@ void consoleMode( ){
       refresh( );
       break;
     default:
-      write(fdm, &ch, 1);
-      fsync(fdm);
+      write(masterFD, &ch, 1);
+      fsync(masterFD);
     }
   }
 }
@@ -443,14 +443,14 @@ int main(int argc, char *argv[ ]){
   tcsetattr(STDOUT_FILENO, TCSANOW, &term);
   */
 
-  fdm=posix_openpt(O_RDWR); // 疑似端末を開く
-  if(fdm<0){
+  masterFD=posix_openpt(O_RDWR); // 疑似端末を開く
+  if(masterFD<0){
     perror("posix_openpt");
     exit(1);
   }
-  if(grantpt(fdm)!=0) // 疑似端末スレーブをアクセス可能にする
+  if(grantpt(masterFD)!=0) // 疑似端末スレーブをアクセス可能にする
     perror("grantpt");
-  if(unlockpt(fdm)!=0) // 疑似端末の内部的なロックを解除する。
+  if(unlockpt(masterFD)!=0) // 疑似端末の内部的なロックを解除する。
     perror("unlockpt");
   /*
   term=term0stdout;
@@ -460,8 +460,8 @@ int main(int argc, char *argv[ ]){
   printf("main 1\n");
   pid=fork( );
   if(pid==0){ // child
-    fds=open(ptsname(fdm), O_RDWR);
-    close(fdm);
+    fds=open(ptsname(masterFD), O_RDWR);
+    close(masterFD);
     if(fds<0){
       perror("Error: open slave PTY");
       exit(1);
