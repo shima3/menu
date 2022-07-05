@@ -27,7 +27,8 @@
   -- 右側に別のウィンドウがあれば、右半分がはみ出る。
   -- 画面の右端であれば、次の行の左端から表示される。
   恐らく、cursesライブラリのバグと考えられる。
-  - コンソール内でエディタなどを起動した場合のため、コンソールは左上にしか配置できない。
+  - Docker内では、エスケープを入力すると次の文字を入力するまでブロックする。
+  - コンソール内でエディタなどを起動すると表示が崩れる。
 
   Design:
   - 画面を左右に分割し、左側はメニュー、右側はコンソールとする。
@@ -193,8 +194,10 @@ void consoleOutput(){
         default:
           j=i+4;
         }
+        /*
         if(write(STDOUT_FILENO, buf+i, j-i)<=0) break;
         fsync(STDOUT_FILENO);
+        */
         // wprintw(consoleWin, "[%d]", j-i);
         // for(++i; i<j; ++i) waddch(consoleWin, buf[i]);
         i=j-1;
