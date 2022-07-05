@@ -221,8 +221,10 @@ void consoleOutput(){
         fsync(STDOUT_FILENO);
       */
     case '\r':
+      /*
       getyx(consoleWin, y, x);
       wmove(consoleWin, y, 0);
+      */
       ++i;
       break;
     default:
