@@ -13,14 +13,18 @@
   https://tldp.org/HOWTO/NCURSES-Programming-HOWTO/init.html
   - セリカ式 ncurses
   http://www.kis-lab.com/serikashiki/man/ncurses.html
+  - セリカ式 キーコード
+  http://www.kis-lab.com/serikashiki/man/ncurses_keycode.html
   - Ncurses 入門
   http://linuxmag.osdn.jp/Japanese/March2002/article233.shtml
   - man pages section 3: Curses Library Functions
   https://docs.oracle.com/cd/E86824_01/html/E54767/copywin-3curses.html
   - JIS X 0202:1998 (ISO/IEC 2022:1994)
   https://kikakurui.com/x0/X0202-1998-01.html
-  - 2.7 対応している制御コード一覧
+  - 2.7 対応している制御コード一覧 # エスケープシーケンス一覧
   https://kmiya-culti.github.io/RLogin/ctrlcode.html
+  - 対応制御シーケンス
+  https://ttssh2.osdn.jp/manual/4/ja/about/ctrlseq.html
   
   Bugs:
   - 背景色を変更したウィンドウが右端にあると左側のウィンドウの空行も同じ背景色になる。
@@ -70,6 +74,13 @@
 #include <string.h>
 #include <errno.h>
 #include <pthread.h>
+#include <ctype.h>
+
+#define MENU_MAX_WIDTH 100
+/* defined in termios.h
+  #define CTRL(CH) ((CH)&0x1F)
+*/
+#define STDERR_LOG fprintf(stderr, "%s %d: trace\n", __FILE__, __LINE__)
 
 typedef struct{
   char *title;
@@ -77,12 +88,13 @@ typedef struct{
   char shortcut;
 } MenuItem;
 
-int screenWidth, screenHeight;
-WINDOW *menuPad, *menuWin, *consoleWin, *choiceWin, *commandWin;
+int screenWidth=0, screenHeight=0;
+WINDOW *menuPad, *menuWin=NULL, *consoleWin, *commandWin;
+// WINDOW *choiceWin;
 int consoleWidth=0, consoleHeight=0;
-int menuWidth=20, menuHeight=0;
-int menuPadX=0, menuPadY=0;
-int commandWidth=0, commandHeight=3;
+int menuWidth=0, menuHeight=0, menuColumn;
+// int menuPadX=0, menuPadY=0;
+int commandWidth=0, commandHeight=1;
 MenuItem menuItems[ ]={
   {"T メニュー先頭", "", 'T'},
   {"L ファイル一覧", "ls", 'L'},
@@ -91,68 +103,102 @@ MenuItem menuItems[ ]={
   {" ホーム", "cd ~", 0},
   {" 上のフォルダ", "cd ..", 0},
   {"M メニュー操作類", "", 0},
-  {"ESC コマンド入力", "", 0},
-  {"RET コマンド実行", "", 0},
+  {"[ モード切替", "", '['},
+  {"J コマンド実行", "", 0},
   {"↓ 下に移動", "", 0},
   {"↑ 上に移動", "", 0},
   {"Q メニュー終了", "", 'Q'},
-  {NULL, NULL}
+  {" 異常に長いコマンド", "abcdefghi1abcdefghi2abcdefghi3abcdefghi4abcdefghi5abcdefghi6abcdefghi7abcdefghi8abcdefghi9abcdefgh10", 0},
+  {NULL}
 };
-int choiceY=0;
+int menuItemNumber, menuItemWidth, menuItemSelect=0;
+// int choiceY=0;
 int childDie=FALSE;
 int masterFD, slaveFD;
 
 void makeMenuPad(){
-  int i;
-  
-  for(menuHeight=0; menuItems[menuHeight].title!=NULL; ++menuHeight);
-  menuPad=newpad(menuHeight, menuWidth);
-  wbkgd(menuPad, COLOR_PAIR(1));
-  for(i=0; i<menuHeight; ++i){
+  int x, y, i;
+
+  menuItemWidth=0;
+  menuPad=newpad(1, MENU_MAX_WIDTH);
+  for(menuItemNumber=0;
+      menuItems[menuItemNumber].title!=NULL; ++menuItemNumber){
+    wmove(menuPad, 0, 0);
+    waddstr(menuPad, menuItems[menuItemNumber].title);
+    getyx(menuPad, y, x);
+    if(menuItemWidth<x) menuItemWidth=x;
+  }
+  delwin(menuPad);
+
+  menuPad=newpad(menuItemNumber, menuItemWidth);
+  // wbkgd(menuPad, COLOR_PAIR(1));
+  for(i=0; i<menuItemNumber; ++i){
     wmove(menuPad, i, 0);
     waddstr(menuPad, menuItems[i].title);
   }
+
+  fprintf(stderr, "menuItemNumber=%d\n", menuItemNumber);
+  fprintf(stderr, "menuItemWidth=%d\n", menuItemWidth);
 }
 
+void calculateMenuSize( ){
+  menuColumn=screenWidth/menuItemWidth;
+  if(menuColumn<1) menuColumn=1;
+  menuHeight=(menuItemNumber+menuColumn-1)/menuColumn;
+  menuColumn=(menuItemNumber+menuHeight-1)/menuHeight;
+  menuWidth=menuItemWidth*menuColumn;
+
+  fprintf(stderr, "menuColumn=%d\n", menuColumn);
+  fprintf(stderr, "menuWidth=%d\n", menuWidth);
+  fprintf(stderr, "menuHeight=%d\n", menuHeight);
+}
+
+#define TRACE STDERR_LOG
 void redrawMenu(){
   int i;
 
+  TRACE;
+  calculateMenuSize( );
+  mvwin(menuWin, screenHeight-menuHeight, 0);
+  wresize(menuWin, menuHeight, menuWidth);
   werase(menuWin);
+  TRACE;
   /*
-  wmove(menuWin, 0, 0);
-  for(int i=0; menuItems[i]!=NULL; ++i){
-    waddchstr(menuWin, menuItems[i]);
-    waddch(menuWin, '\n');
+  for(i=0; i<menuColumn; ++i){
+    fprintf(stderr, "i=%d\n", i);
+    copywin(menuPad, menuWin, menuHeight*i, 0, 0, menuItemWidth*i,
+            menuHeight-1, menuItemWidth*(i+1)-1, FALSE);
   }
-  prefresh(menuPad, 0, 0, 0, 0, screenHeight-1, menuWidth-1);
   */
-  /* int copywin(WINDOW *srcwin, WINDOW *dstwin, int sminrow,
-     int smincol, int dminrow, int dmincol,
+  for(i=0; i<menuItemNumber; ++i){
+    copywin(menuPad, menuWin, i, 0, i%menuHeight, i/menuHeight*menuItemWidth,
+            i%menuHeight, (i/menuHeight+1)*menuItemWidth-1, FALSE);
+  }
+  /* int copywin(WINDOW *srcwin, WINDOW *dstwin,
+     int sminrow,int smincol, int dminrow, int dmincol,
      int dmaxrow, int dmaxcol, int overlay);
      
      The copywin() routine provides a finer granularity of control over the overlay() and overwrite() routines. Like in the prefresh() routine, a rectangle is specified in the destination window, (dminrow, dmincol) and (dmaxrow, dmaxcol), and the upper-left-corner coordinates of the source window, (sminrow, smincol). If the argument overlay is true, then copying is non-destructive, as in overlay(). */
-  // overlay(menuPad, menuWin);
-  // overwrite(menuPad, menuWin);
-  for(i=0; i<screenHeight; ++i){
-    // wmove(menuWin, i, menuWidth/2);
-    wmove(menuWin, i, 0);
-    waddstr(menuWin, "\u200B"); // ZERO WIDTH SPACE
-  }
-
-  int height=menuHeight-menuPadY;
-  if(height>screenHeight) height=screenHeight;
-  copywin(menuPad, menuWin, menuPadY, menuPadX, 0, 0, height-1, menuWidth-1, FALSE);
-  // copywin(menuPad, menuWin, 0, 0, 0, 0, screenHeight, menuWidth, TRUE);
-
-  wmove(menuWin, 0, 0);
+  TRACE;
 }
+#undef TRACE
 
+/*
 void redrawChoice(){
   mvwin(choiceWin, choiceY, screenWidth-menuWidth);
   werase(choiceWin);
   wmove(choiceWin, 0, 0);
   waddstr(choiceWin, menuItems[choiceY].title);
   overwrite(choiceWin, stdscr);
+}
+*/
+
+void reverseSelect(){
+  wmove(menuWin, menuItemSelect%menuHeight,
+        menuItemSelect/menuHeight*menuItemWidth);
+  wattrset(menuWin, A_REVERSE);
+  waddstr(menuWin, menuItems[menuItemSelect].title);
+  wattrset(menuWin, 0);
 }
 
 void consoleOutput(){
@@ -202,6 +248,7 @@ void consoleOutput(){
           break;
         case 'K':
           getyx(consoleWin, y, x);
+          // leaveok(consoleWin, FALSE);
           switch(n){
           case 1:
             wmove(consoleWin, y, 0);
@@ -209,14 +256,21 @@ void consoleOutput(){
               waddch(consoleWin, ' ');
             break;
           case 2:
+            /*
             wmove(consoleWin, y, 0);
             for(n = 0; n < consoleWidth; ++n)
               waddch(consoleWin, ' ');
+            */
+            wdeleteln(consoleWin);
             break;
           default:
+            /*
             for(n = x; n < consoleWidth; ++n)
               waddch(consoleWin, ' ');
+            */
+            wclrtoeol(consoleWin);
           }
+          // leaveok(consoleWin, TRUE);
           wmove(consoleWin, y, x);
           break;
         case 'P':
@@ -265,12 +319,12 @@ void consoleOutput(){
       // for(++i; i<j; ++i) waddch(consoleWin, buf[i]);
       i=j;
       break;
-    case '\r':
-      ++i;
-      break;
-    case 'G'&0x1F:
+    case CTRL('G'):
       if(write(STDOUT_FILENO, buf+i, 1)<=0) break;
       fsync(STDOUT_FILENO);
+      ++i;
+      break;
+    case CTRL('M'): // '\r'
       ++i;
       break;
     default:
@@ -302,166 +356,223 @@ void consoleOutput(){
   childDie=TRUE;
 }
 
-int menuMode(){
-  int ch, i, x, y;
-  char buf[1024];
+void calculateConsoleSize( ){
+  // consoleWidth=screenWidth-menuWidth;
+  consoleWidth=screenWidth;
+  consoleHeight=screenHeight-commandHeight-menuHeight;
+}
 
-  for(;;){
-    // write(fdm, "\r", 1); fsync(fdm);
-    getmaxyx(stdscr, screenHeight, screenWidth); // スクリーンサイズを取得する。
-    wresize(menuWin, screenHeight, menuWidth); // ウィンドウのサイズを変更する。
-    consoleWidth=screenWidth-menuWidth;
-    consoleHeight=screenHeight-commandHeight;
-    // wresize(consoleWin, consoleHeight, consoleWidth);
-    redrawMenu( );
-    
-    /*
-      getyx(consoleWin, y, x);
-      waddch(consoleWin, '.');
-      overwrite(consoleWin, stdscr);
-      touchwin(stdscr);
-      refresh( ); // 論理画面に変更がなかったとき、物理カーソルの位置が戻らないバグ？のた必要
-    */
-  
-    werase(commandWin);
-    wmove(commandWin, 0, 0);
+#define TRACE STDERR_LOG
+void redrawCommand( ){
+  // int len;
+  int x, y;
+
+  TRACE;
+  commandWidth = screenWidth;
+  mvwin(commandWin, consoleHeight, 0);
+  wresize(commandWin, commandHeight, commandWidth);
+  werase(commandWin);
+  wmove(commandWin, 0, 0);
+  /*
     wattrset(commandWin, COLOR_PAIR(1));
     waddstr(commandWin, menuItems[choiceY].title);
     waddch(commandWin, '\n');
-    /*
-      for(;;){
-      getyx(commandWin, y, x);
-      if(x==0) break;
-      waddch(commandWin, ' ');
-      }
-    */
-    // waddch(commandWin, '\n');
-    wattrset(commandWin, 0);
-    waddstr(commandWin, menuItems[choiceY].command);
+  */
+  // wattrset(commandWin, 0);
+  waddstr(commandWin, menuItems[menuItemSelect].command);
+
+  TRACE;
+  /*
+  write(masterFD, "\x01\0B", 2); // Ctrl+A Ctrl+K
+  len=strlen(menuItems[menuItemSelect].command);
+  write(masterFD, menuItems[menuItemSelect].command, len);
+  write(masterFD, "\x01", 1); // Ctrl+A
+  fsync(masterFD);
+  */
+  getyx(consoleWin, y, x);
+  waddstr(consoleWin, menuItems[menuItemSelect].command);
+  overwrite(consoleWin, stdscr);
+  touchwin(stdscr);
+  refresh( );
+  wmove(consoleWin, y, x);
+  wclrtobot(consoleWin);
+
+  TRACE;
+}
+#undef TRACE
+
+void writeCommand(char command[ ]){
+  int len;
+  
+  len=strlen(command);
+  if(len>0){
+    write(masterFD, command, len);
+    write(masterFD, "\n", 1);
+    fsync(masterFD);
+  }
+}
+
+#define TRACE STDERR_LOG
+int menuMode(){
+  int ch, i, x, y, shortcut;
+  char buf[1024];
+  MenuItem *item;
+
+  for(;;){
+    TRACE;
+    // write(fdm, "\r", 1); fsync(fdm);
+    getmaxyx(stdscr, screenHeight, screenWidth); // スクリーンサイズを取得する。
+
+    TRACE;
+
+    redrawMenu( );
+
+    TRACE;
+    reverseSelect( );
+
+    TRACE;
+    overwrite(menuWin, stdscr);
+
+    TRACE;
+
+    calculateConsoleSize( );
+    wresize(consoleWin, consoleHeight, consoleWidth);
+    overwrite(consoleWin, stdscr);
+
+    TRACE;
+
+    redrawCommand( );
     overwrite(commandWin, stdscr);
+
+    TRACE;
     
-    redrawChoice();
-    
-    // touchwin(consoleWin);
-    /*
-      if(mvcur(-1, -1, consoleHeight-1, 0) == ERR)
-      waddstr(consoleWin, "[ERR]");
-      else waddstr(consoleWin, "[OK]");
-    */
-    
-    /*
-      getyx(consoleWin, y, x);
-      waddch(consoleWin, '_');
-      wmove(consoleWin, y, x);
-      // wdelch(consoleWin);
-      overwrite(consoleWin, stdscr);
-      // wprintw(consoleWin, "(%d,%d)", x, y);
-      */
-    
+    // redrawChoice();
     touchwin(stdscr);
     refresh( );
     ch=getch( ); // キーボードから文字を入力する。
-    
-    /*
-      wmove(consoleWin, 0, 0);
-      wprintw(consoleWin, "(%d) ", ch);
-    */
-    
-    // getyx(stdscr, y, x); // カーソルの座標を取得する。
-    // wprintw(consoleWin, "ch=%d, x=%d, y=%d, w=%d, h=%d\n", ch, x, y, screenWidth, screenHeight); // curses版のprintf
-    // printf("ch=%d, x=%d, y=%d, w=%d, h=%d\r\n", ch, x, y, screenWidth, screenHeight); // curses版のprintf
-    // touchwin(stdscr);
 
-    /*
-    getyx(consoleWin, y, x);
-    wmove(consoleWin, 0, 0);
-    wprintw(consoleWin, "(%d)", ch);
-    wmove(consoleWin, y, x);
-    overwrite(consoleWin, stdscr);
-    refresh( );
-    */
+    TRACE;
 
     switch(ch){
     case KEY_UP:
-      if(choiceY>0) --choiceY;
+      if(menuItemSelect > 0)
+        --menuItemSelect;
       break;
     case KEY_DOWN:
-      if(choiceY<menuHeight-1) ++choiceY;
+      if(menuItemSelect < menuItemNumber-1)
+        ++menuItemSelect;
+      break;
+    case KEY_LEFT:
+      if(menuItemSelect >= menuHeight)
+        menuItemSelect -= menuHeight;
+      break;
+    case KEY_RIGHT:
+      if(menuItemSelect < menuItemNumber-menuHeight)
+        menuItemSelect += menuHeight;
+      break;
+    case '\n':
+
+      TRACE;
+
+      item=&menuItems[menuItemSelect];
+      switch(item->shortcut){
+      case 'Q':
+        return FALSE;
+      case '[':
+        return TRUE;
+      }
+      writeCommand(item->command);
       break;
       /*
-        case KEY_LEFT:
-        if(menuPadX>0) --menuPadX;
-        break;
-        case KEY_RIGHT:
-        if(menuPadX<screenWidth-1) ++menuPadX;
-        break;
-      */
-    case '\n':
-      if(menuItems[choiceY].shortcut == 'Q')
-        return FALSE;
-      strcpy(buf, menuItems[choiceY].command);
-      strcat(buf, "\n");
-      write(masterFD, buf, strlen(buf));
-      fsync(masterFD);
-      break;
     case 0x1B: // escape key
-      redrawMenu( );
-      overwrite(menuWin, stdscr);
-      touchwin(stdscr);
-      refresh( );
       return TRUE;
+      */
     default:
-      for(i=0; i<menuHeight; ++i){
-        if(menuItems[i].shortcut==ch){
-          choiceY=i;
-          break;
+
+      TRACE;
+
+      for(i=0; i<menuItemNumber; ++i){
+        shortcut=menuItems[i].shortcut;
+        if(shortcut!=0){
+          if(CTRL(shortcut) == ch){
+            switch(shortcut){
+            case 'Q':
+              return FALSE;
+            case '[':
+              return TRUE;
+            }
+            writeCommand(menuItems[i].command);
+            break;
+          }
+          if(toupper(shortcut) == toupper(ch)){
+            menuItemSelect=i;
+            break;
+          }
         }
       }
     }
   }
 }
+#undef TRACE
 
 void consoleMode( ){
   int buf[1];
 
+  redrawMenu( );
+  overwrite(menuWin, stdscr);
+  touchwin(stdscr);
+  refresh( );
   for(;;){
     buf[0]=getch( );
     switch(buf[0]){
     case 0x1B:
       return;
-    case 'L'&0x1F:
+    case CTRL('L'):
       werase(consoleWin);
       overwrite(consoleWin, stdscr);
       touchwin(stdscr);
       refresh( );
       break;
     case KEY_UP:
-      buf[0]='P'&0x1F;
+      buf[0]=CTRL('P');
       write(masterFD, buf, 1);
       fsync(masterFD);
       break;
     case KEY_DOWN:
-      buf[0]='N'&0x1F;
+      buf[0]=CTRL('N');
       write(masterFD, buf, 1);
       fsync(masterFD);
       break;
     case KEY_LEFT:
-      buf[0]='B'&0x1F;
+      buf[0]=CTRL('B');
       write(masterFD, buf, 1);
       fsync(masterFD);
       break;
     case KEY_RIGHT:
-      buf[0]='F'&0x1F;
+      buf[0]=CTRL('F');
+      write(masterFD, buf, 1);
+      fsync(masterFD);
+      break;
+    case KEY_BACKSPACE:
+      buf[0]=CTRL('H');
       write(masterFD, buf, 1);
       fsync(masterFD);
       break;
     default:
+      /* for debug
+      wmove(commandWin, 0, 0);
+      wprintw(commandWin, "(%d)", buf[0]);
+      overwrite(commandWin, stdscr);
+      touchwin(stdscr);
+      refresh( );
+      */
       write(masterFD, buf, 1);
       fsync(masterFD);
     }
   }
 }
 
+#define TRACE STDERR_LOG
 int main(int argc, char *argv[ ]){
   int x=0, y=0, curX=0, curY=0;
   // char buf[1024];
@@ -477,15 +588,24 @@ int main(int argc, char *argv[ ]){
   int pid;
   pthread_t thread;
 
+  // 端末の状態を保存する。
+  if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws0)!=-1)
+    printf("(%d, %d)\n", ws0.ws_col, ws0.ws_row);  // (幅, 高さ)
+  else perror("ioctl");
+  tcgetattr(STDIN_FILENO, &term0stdin);
+  tcgetattr(STDOUT_FILENO, &term0stdout);
+  tcgetattr(STDERR_FILENO, &term0stderr);
+
+  TRACE;
+
   // setlocale(LC_ALL, "ja_JP.UTF-8"); // ロケールをja_JP.UTF-8に設定する。
   setlocale(LC_ALL, ""); // 環境変数に従ってロケールを設定する。
   // printf("%s\n", setlocale(LC_ALL, NULL)); // 現在のロケールを確認する。
 
   initscr( ); // スクリーンを初期化する。
-  set_escdelay(0);
-  curs_set(FALSE); // カーソルを表示しないモードに設定する。
   // curs_set(TRUE); // カーソルを表示するモードに設定する。
-  getmaxyx(stdscr, screenHeight, screenWidth); // スクリーンサイズを取得する。
+  curs_set(FALSE); // カーソルを表示しないモードに設定する。
+  // getmaxyx(stdscr, screenHeight, screenWidth); // スクリーンサイズを取得する。
   // ch=inch( ); // スクリーン上のカーソル位置にある文字を読み取る。
   // getstr(str); // キーボードから文字列を入力する。
   // instr(str); //  スクリーン上のカーソル位置にある文字列を読み取る。
@@ -494,16 +614,67 @@ int main(int argc, char *argv[ ]){
   // timeout(0); // 非ブロッキングモードに設定する。
   // timeout(-1); // ブロッキングモードに設定する。
   // scrollok(menu, TRUE); // winをスクロールできるように設定する。
-  consoleWidth=screenWidth-menuWidth;
-  consoleHeight=screenHeight-commandHeight;
+  getmaxyx(stdscr, screenHeight, screenWidth); // スクリーンサイズを取得する。
 
-  // 端末の状態を保存する。
-  if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws0)!=-1)
-    printf("(%d, %d)\n", ws0.ws_col, ws0.ws_row);  // (幅, 高さ)
-  else perror("ioctl");
-  tcgetattr(STDIN_FILENO, &term0stdin);
-  tcgetattr(STDOUT_FILENO, &term0stdout);
-  tcgetattr(STDERR_FILENO, &term0stderr);
+  TRACE;
+  
+  // curs_set(FALSE); // 物理カーソルを見えなくする。
+  raw( ); // Ctrl+C や Ctrl+Z などもキー入力するよう設定する。
+  cbreak( ); // 入力バッファを使用しないモードに設定する。
+  // echo( ); // キー入力された文字を表示するモードに設定する。
+  noecho( ); // キー入力された文字を表示しないモードに設定する。
+  keypad(stdscr, TRUE); // カーソルキーを有効にする。
+  /*
+    カーソルキーのマクロ名: KEY_UP，KEY_DOWN，KEY_LEFT，KEY_RIGHT
+    KEY_BACKSPACE	backspace key
+    KEY_F(n)		Value of function key n
+    KEY_ENTER		enter/send key
+  */
+  // leaveok(stdscr, TRUE); // 論理カーソルが物理カーソルの位置に移動する。
+  // leaveok(stdscr, FALSE); // 物理カーソルの位置を元に戻す。
+
+  TRACE;
+
+  start_color( ); // カラーを有効にする。
+  pair_content(0, &foreground, &background);
+  init_pair(1, background, foreground);
+  init_pair(2, foreground, background);
+  use_default_colors( ); // 端末のデフォルトの配色を利用する。
+  /* bkgd(COLOR_PAIR(0)); */
+
+  TRACE;
+
+  makeMenuPad( );
+  calculateMenuSize( );
+  menuWin = subwin(stdscr, menuHeight, menuWidth, screenHeight-menuHeight, 0);
+  if(menuWin == NULL){
+    fprintf(stderr, "Failed to create a menu window.\n");
+    exit(1);
+  }
+
+  TRACE;
+
+  calculateConsoleSize( );
+  consoleWin=newwin(consoleHeight, consoleWidth, 0, 0); // ウィンドウを作成する 。
+  if(consoleWin == NULL){
+    fprintf(stderr, "Failed to create a console window.\n");
+    exit(1);
+  }
+  scrollok(consoleWin, TRUE); // スクロールできるように設定する。
+
+  TRACE;
+
+  // commandWidth=screenWidth-menuWidth;
+  commandWidth=screenWidth;
+  commandWin=subwin(stdscr, commandHeight, commandWidth, consoleHeight, 0);
+  if(commandWin==NULL){
+    fprintf(stderr, "Failed to create a command window.\n");
+    exit(1);
+  }
+  scrollok(commandWin, TRUE); // スクロールできるように設定する。
+  wbkgd(commandWin, COLOR_PAIR(1));
+
+  TRACE;
 
   // 端末の状態を変更する。
   /*
@@ -538,7 +709,9 @@ int main(int argc, char *argv[ ]){
   term.c_lflag &= ~ECHO; // エコーしない。
   tcsetattr(fdm, TCSANOW, &term);
   */
-  printf("main 1\n");
+
+  TRACE;
+
   pid=fork( );
   if(pid==0){ // child
     slaveFD=open(ptsname(masterFD), O_RDWR);
@@ -549,11 +722,13 @@ int main(int argc, char *argv[ ]){
     }
     if(setsid( )<0) // 警告（Inappropriate ioctl for device）を避けるため
       perror("setsid");
+    /*
     ws=ws0;
     ws.ws_col=consoleWidth;
     ws.ws_row=consoleHeight;
     if(ioctl(slaveFD, TIOCSWINSZ, &ws)==-1) // ウィンドウサイズを設定する。
       perror("ioctl");
+    */
     // tcsetattr(fds, TCSANOW, &term);
     dup2(slaveFD, STDIN_FILENO);
     dup2(slaveFD, STDOUT_FILENO);
@@ -561,54 +736,31 @@ int main(int argc, char *argv[ ]){
     close(slaveFD);
     // ioctl(STDIN_FILENO, TIOCSCTTY, 1);
     // setenv("PS1", "\r\n$ ", 1);
+    /*
+    ws=ws0;
+    ws.ws_col=consoleWidth;
+    ws.ws_row=consoleHeight;
+    if(ioctl(STDOUT_FILENO, TIOCSWINSZ, &ws)==-1) // ウィンドウサイズを設定する。
+      perror("ioctl");
+    */
     execvp(argv2[0], argv2);
     perror("execvp");
     return errno;
   }
   // parent
   pthread_create(&thread, NULL, (void*(*)(void*))consoleOutput, NULL);
-  
-  // curs_set(FALSE); // 物理カーソルを見えなくする。
-  raw( ); // Ctrl+C や Ctrl+Z などもキー入力するよう設定する。
-  cbreak( ); // 入力バッファを使用しないモードに設定する。
-  // echo( ); // キー入力された文字を表示するモードに設定する。
-  noecho( ); // キー入力された文字を表示しないモードに設定する。
-  keypad(stdscr, TRUE); // カーソルキーを有効にする。
-  /*
-    カーソルキーのマクロ名: KEY_UP，KEY_DOWN，KEY_LEFT，KEY_RIGHT
-    KEY_BACKSPACE	backspace key
-    KEY_F(n)		Value of function key n
-    KEY_ENTER		enter/send key
-  */
-  // leaveok(stdscr, TRUE); // 論理カーソルが物理カーソルの位置に移動する。
-  // leaveok(stdscr, FALSE); // 物理カーソルの位置を元に戻す。
 
-  start_color( ); // カラーを有効にする。
-  pair_content(0, &foreground, &background);
-  init_pair(1, background, foreground);
-  init_pair(2, foreground, background);
-  /*
-    bkgd(COLOR_PAIR(0));
-  */
-  use_default_colors( ); // 端末のデフォルトの配色を利用する。
-
-  makeMenuPad( );
-  
   /* WINDOW *subwin(WINDOW *orig, int lines, int cols, int y, int x);
      lines行，cols列の新しいウィンドウを指定したウィンドウのy行，x列目に作成します．
      x, y は画面stdscrの絶対座標 */
   // menuHeight=screenHeight;
   // menuWin=subwin(stdscr, screenHeight, menuWidth, 0, 0);
-  printf("%d %d %d %d\n", screenHeight, menuWidth, screenWidth, menuWidth);
-  menuWin=subwin(stdscr, screenHeight, menuWidth, 0, screenWidth-menuWidth);
+  // printf("%d %d %d %d\n", screenHeight, menuWidth, screenWidth, menuWidth);
+  // menuWin=subwin(stdscr, screenHeight, menuWidth, 0, screenWidth-menuWidth);
   // menu=newwin(menuHeight, menuWidth, 0, screenWidth-menuWidth-1);
-  if(menuWin==NULL){
-    fprintf(stderr, "Failed to create a menu window.\n");
-    exit(1);
-  }
   // leaveok(menuWin, TRUE); // 物理カーソルの位置を元に戻さない。
   // leaveok(menuWin, FALSE); // 論理カーソルを物理カーソルの位置に戻す。
-  wbkgd(menuWin, COLOR_PAIR(1));
+  // wbkgd(menuWin, COLOR_PAIR(1));
   // wvline(menuframe, 0, menuHeight);
   // wcolor_set(menu, 1, NULL);
   // wattrset(menu, COLOR_PAIR(0) | A_REVERSE);
@@ -618,45 +770,33 @@ int main(int argc, char *argv[ ]){
   // wbkgd(stdscr, COLOR_PAIR(0));
   // wrefresh(menu);
 
+  // wbkgd(consoleWin, 0);
   /* WINDOW *subwin(WINDOW *orig, int nlines, int ncols, int y, int x);
      nlines行，ncols列の新しいウィンドウをスクリーンのy行，x列目に作成する。
      指定したウィンドウと文字列バッファを共有する。*/
   // consoleWidth=screenWidth-menuWidth-1;
   // consoleWin=newwin(screenHeight, consoleWidth, 0, menuWidth+1); // ウィンドウを作成する 。
-  consoleWin=newwin(consoleHeight, consoleWidth, 0, 0); // ウィンドウを作成する 。
   // menu=subwin(stdscr, 10, 20, 10, 10); // ウィンドウを作成する。
   // log=newwin(screenHeight, screenWidth, 0, 0); // ウィンドウを作成する。
-  if(consoleWin==NULL){
-    fprintf(stderr, "Failed to create a console window.\n");
-    exit(1);
-  }
   // leaveok(consoleWin, TRUE);
   // leaveok(consoleWin, FALSE); // 物理カーソルが論理カーソルの位置に戻る。
   // wbkgd(consoleWin, COLOR_PAIR(2));
-  wbkgd(consoleWin, 0);
-  scrollok(consoleWin, TRUE); // スクロールできるように設定する。
   // wprintw(logWin, "ログ\n");
 
-  commandWidth=screenWidth-menuWidth;
-  commandWin=subwin(stdscr, commandHeight, commandWidth, consoleHeight, 0);
-  if(commandWin==NULL){
-    fprintf(stderr, "Failed to create a command window.\n");
-    exit(1);
-  }
-  scrollok(commandWin, TRUE); // スクロールできるように設定する。
-  // wbkgd(commandWin, COLOR_PAIR(2));
   // leaveok(commandWin, TRUE); // 物理カーソルの位置を元に戻す。
   // leaveok(commandWin, FALSE); // 物理カーソルの位置を元に戻す。
 
   // choiceWin=newwin(1, screenWidth, choiceY, 0);
   // choiceWin=newwin(1, menuWidth, choiceY, 0);
+  /*
   choiceWin=newwin(1, menuWidth, choiceY, 0);
   if(choiceWin==NULL){
     fprintf(stderr, "Failed to create a choice window.\n");
     exit(1);
   }
-  // wbkgd(choiceWin, COLOR_PAIR(1));
   wbkgd(choiceWin, COLOR_PAIR(2));
+  */
+  // wbkgd(choiceWin, COLOR_PAIR(1));
   // leaveok(choiceWin, TRUE); //  論理カーソルは物理カーソルの位置になる。
   // leaveok(choiceWin, FALSE); // 物理カーソルの位置を元に戻す。
 
@@ -679,7 +819,12 @@ int main(int argc, char *argv[ ]){
   // strcpy(buf, "export PS1=\"$  \"\n"); write(fdm, buf, strlen(buf));
   // strcpy(buf, "echo $PS1\n"); write(fdm, buf, strlen(buf));
   // fsync(fdm);
+
+  TRACE;
+
   while(menuMode( )) consoleMode( );
+
+  TRACE;
 
   tcsetattr(STDOUT_FILENO, TCSANOW, &term0stdin);
   tcsetattr(STDOUT_FILENO, TCSANOW, &term0stdout);
@@ -694,5 +839,11 @@ int main(int argc, char *argv[ ]){
   printf("menuWin=%lx\n", (long)menuWin);
   */
   // printf("(%d, %d)\n", ws0.ws_col, ws0.ws_row);  // (幅, 高さ)
+  fprintf(stderr, "menuItemNumber=%d\n", menuItemNumber);
+  fprintf(stderr, "menuItemWidth=%d\n", menuItemWidth);
+  fprintf(stderr, "screenWidth=%d\n", screenWidth);
+  fprintf(stderr, "screenHeight=%d\n", screenHeight);
+  fprintf(stderr, "menuColumn=%d\n", menuColumn);
   return 0;
 }
+#undef TRACE
