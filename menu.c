@@ -228,7 +228,10 @@ void consoleOutput(){
   for(;;){
     if(i>=len){
       getyx(consoleWin, y, x);
+
+#ifdef DEBUG
       wprintw(commandWin, "(%d %d %d)", x, y, ++count); overwrite(commandWin, stdscr); // for debug
+#endif
 
       scrollok(consoleWin, FALSE);
       ch = winch(consoleWin);
@@ -425,6 +428,7 @@ void consoleOutput(){
         j=i+4;
         break;
       default:
+#ifdef DEBUG
         if(buf[i]<0x20 || buf[i]==0x7F){
           scrollok(commandWin, TRUE);
           wprintw(commandWin, " %02X", buf[i]);
@@ -432,6 +436,7 @@ void consoleOutput(){
           touchwin(stdscr);
           refresh( );
         }
+#endif
         j=i+1;
       }
       getyx(consoleWin, y, x);
@@ -863,6 +868,7 @@ int main(int argc, char *argv[ ]){
   }
   // parent
   pthread_create(&thread, NULL, (void*(*)(void*))consoleOutput, NULL);
+  sleep(1);
 
   /* WINDOW *subwin(WINDOW *orig, int lines, int cols, int y, int x);
      lines行，cols列の新しいウィンドウを指定したウィンドウのy行，x列目に作成します．
