@@ -91,7 +91,7 @@ void debug_fprintFLf(FILE *out, char file[ ], int line, char fmt[ ], ...){
   va_start(ap, fmt);
   vsprintf(buf, fmt, ap);
   va_end(ap);
-  fprintf(stderr, "%s %d: %s\n", file, line, buf);
+  fprintf(stderr, "%s %d: %s", file, line, buf);
 }
 
 typedef struct{
@@ -157,9 +157,9 @@ void calculateMenuSize( ){
   menuColumn=(menuItemNumber+menuHeight-1)/menuHeight;
   menuWidth=menuItemWidth*menuColumn;
 
-  fprintf(stderr, "menuColumn=%d\n", menuColumn);
-  fprintf(stderr, "menuWidth=%d\n", menuWidth);
-  fprintf(stderr, "menuHeight=%d\n", menuHeight);
+  debug_printf("menuColumn=%d\n", menuColumn);
+  debug_printf("menuWidth=%d\n", menuWidth);
+  debug_printf("menuHeight=%d\n", menuHeight);
 }
 
 #define TRACE STDERR_LOG
@@ -944,11 +944,11 @@ int main(int argc, char *argv[ ]){
   printf("menuWin=%lx\n", (long)menuWin);
   */
   // printf("(%d, %d)\n", ws0.ws_col, ws0.ws_row);  // (幅, 高さ)
-  fprintf(stderr, "menuItemNumber=%d\n", menuItemNumber);
-  fprintf(stderr, "menuItemWidth=%d\n", menuItemWidth);
-  fprintf(stderr, "screenWidth=%d\n", screenWidth);
-  fprintf(stderr, "screenHeight=%d\n", screenHeight);
-  fprintf(stderr, "menuColumn=%d\n", menuColumn);
+  debug_printf("menuItemNumber=%d\n", menuItemNumber);
+  debug_printf("menuItemWidth=%d\n", menuItemWidth);
+  debug_printf("screenWidth=%d\n", screenWidth);
+  debug_printf("screenHeight=%d\n", screenHeight);
+  debug_printf("menuColumn=%d\n", menuColumn);
   return 0;
 }
 #undef TRACE
