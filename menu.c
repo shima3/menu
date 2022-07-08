@@ -82,7 +82,7 @@
   #define CTRL(CH) ((CH)&0x1F)
 */
 
-#define DEBUG
+// #define DEBUG
 
 #ifdef DEBUG
 #define debug_printf(fmt, ...) debug_fprintFLf(stderr, __FILE__, __LINE__, fmt, __VA_ARGS__)
