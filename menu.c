@@ -82,7 +82,8 @@
   #define CTRL(CH) ((CH)&0x1F)
 */
 #define STDERR_LOG fprintf(stderr, "%s %d: trace\n", __FILE__, __LINE__)
-#define debug_printf(fmt, ...) debug_fprintFLf(stderr, __FILE__, __LINE__, fmt, __VA_ARGS__)
+#define debug_printf(fmt, ...)
+// #define debug_printf(fmt, ...) debug_fprintFLf(stderr, __FILE__, __LINE__, fmt, __VA_ARGS__)
 
 void debug_fprintFLf(FILE *out, char file[ ], int line, char fmt[ ], ...){
   va_list ap;
