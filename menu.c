@@ -89,7 +89,7 @@
 #define STDERR_LOG debug_fprintFLf(stderr, __FILE__, __LINE__, "trace\n")
 #else
 #define debug_printf(fmt, ...)
-#define STDERR_LOG
+// #define STDERR_LOG
 #endif
 #define STDERR_LOG fprintf(stderr, "%s %d: trace\n", __FILE__, __LINE__)
 
