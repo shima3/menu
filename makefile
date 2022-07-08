@@ -3,7 +3,9 @@
 TARGETS=menu console
 
 all: $(TARGETS)
-	git commit -am "Successful compilation" -uno
+	git status --short --untracked-files=no > .status
+	if [ -s .status ]; then git commit --all --file=.status --untracked-files=no --quiet; fi
+#	git commit -am "Successful compilation" -uno
 #	git checkout -B compile
 #	- git branch --quiet compile
 #	git checkout compile

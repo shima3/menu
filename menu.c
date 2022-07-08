@@ -2,6 +2,22 @@
   menu.c
   2022.6.27 by Kazuyuki Shima
 
+  Design:
+  - 画面を左右に分割し、左側はメニュー、右側はコンソールとする。
+  - 左右の境目に1カラムの垂直な線を引く。
+  - メニューモードとコンソールモードがある。
+  - メニューモードで、ユーザはメニューからコマンドを選んで実行できる。
+  -- メニューにある複数の行のうち１行が選択されている。
+  -- 選択中の行は、スクリーンの右端まで反転表示される。
+  -- ユーザが上下の矢印キーを押すと、選択中の行が変わる。
+  -- ユーザがリターンキーを押すと、選択中の行に設定されたコマンドが実行される。
+  -- メニューの左端に１つのショートカットキーが表示されている。
+  -- ユーザがショートカットキーを押すと、その行に設定されたコマンドが実行される。
+  - コンソールモードでは、ユーザはコンソールにコマンドを入力して実行できる。
+  - メニューモードとコンソールモードのどちらでも
+  -- コマンドの実行結果はコンソールに表示される。
+  -- ユーザがエスケープキーを押すと、メニューモードとコンソールモードが切り替わる。
+
   References:
   - cursesライブラリの超てきとー解説
   https://www.kushiro-ct.ac.jp/yanagawa/pl2b-2018/curses/about.html
@@ -27,30 +43,14 @@
   https://ttssh2.osdn.jp/manual/4/ja/about/ctrlseq.html
   
   Bugs:
-  - 背景色を変更したウィンドウが右端にあると左側のウィンドウの空行も同じ背景色になる。
-  恐らく、cursesライブラリのバグと考えられる。
-  - 画面の左右でウィンドウが異なる場合、全角文字の左半分がウインドウの右端のカラムに来たとき、
-  -- 右側に別のウィンドウがあれば、右半分がはみ出る。
-  -- 画面の右端であれば、次の行の左端から表示される。
-  恐らく、cursesライブラリのバグと考えられる。
   - Docker内では、エスケープを入力すると次の文字を入力するまでブロックする。
   - コンソール内でエディタなどを起動すると表示が崩れる。
-
-  Design:
-  - 画面を左右に分割し、左側はメニュー、右側はコンソールとする。
-  - 左右の境目に1カラムの垂直な線を引く。
-  - メニューモードとコンソールモードがある。
-  - メニューモードで、ユーザはメニューからコマンドを選んで実行できる。
-  -- メニューにある複数の行のうち１行が選択されている。
-  -- 選択中の行は、スクリーンの右端まで反転表示される。
-  -- ユーザが上下の矢印キーを押すと、選択中の行が変わる。
-  -- ユーザがリターンキーを押すと、選択中の行に設定されたコマンドが実行される。
-  -- メニューの左端に１つのショートカットキーが表示されている。
-  -- ユーザがショートカットキーを押すと、その行に設定されたコマンドが実行される。
-  - コンソールモードでは、ユーザはコンソールにコマンドを入力して実行できる。
-  - メニューモードとコンソールモードのどちらでも
-  -- コマンドの実行結果はコンソールに表示される。
-  -- ユーザがエスケープキーを押すと、メニューモードとコンソールモードが切り替わる。
+  - 恐らく、cursesライブラリのバグと考えられる。
+  -- 背景色を変更したウィンドウが右端にあると左側のウィンドウの空行も同じ背景色になる。
+  -- 画面の左右でウィンドウが異なる場合、全角文字の左半分がウインドウの右端のカラムに来たとき、
+  --- 右側に別のウィンドウがあれば、右半分がはみ出る。
+  --- 画面の右端であれば、次の行の左端から表示される。
+  -- カーソルが左端にあるとき、バックスペースを出力しても１つ上の行に移動しない。
 
   Naming convention:
   - 型名 upper camel case
@@ -203,32 +203,50 @@ void reverseSelect(){
 
 void consoleOutput(){
   char buf[1024];
-  int len=0, i=0, j, x, y, ch, n, x2;
+  int len=0, i=0, j, x, y, ch, n, x2, y2;
+  int count=0;
 
   // buf[0]=13; // carriage return
   for(;;){
     if(i>=len){
       getyx(consoleWin, y, x);
-      wattrset(consoleWin, COLOR_PAIR(1));
+      wprintw(commandWin, "(%d %d %d)", x, y, ++count); overwrite(commandWin, stdscr); // for debug
+
+      scrollok(consoleWin, FALSE);
       ch = winch(consoleWin);
+      wattrset(consoleWin, COLOR_PAIR(1));
       waddch(consoleWin, ch);
-      overwrite(consoleWin, stdscr);
-      refresh( );
-      wattrset(consoleWin, 0);
       wmove(consoleWin, y, x);
+      wattrset(consoleWin, 0);
+
+      overwrite(consoleWin, stdscr);
+      touchwin(stdscr);
+      refresh( );
+
+      waddch(consoleWin, ch);
+      wmove(consoleWin, y, x);
+      scrollok(consoleWin, TRUE);
+
       len=read(masterFD, buf, sizeof(buf));
       if(len<=0) break;
       i=0;
       // getyx(consoleWin, y, x);
       // ch = winch(consoleWin);
-      wmove(consoleWin, y, x);
-      waddch(consoleWin, ch);
-      wmove(consoleWin, y, x);
     }
     switch(buf[i]){
+    case 0x0D: // '\r':
+      getyx(consoleWin, y, x);
+      if(buf[++i] == 0x0A){ // '\n'
+        if(y >= consoleHeight-1){
+            wscrl(consoleWin, 1);
+            wmove(consoleWin, consoleHeight-1, 0);
+        }else wmove(consoleWin, y+1, 0);
+        ++i;
+      }else wmove(consoleWin, y, 0);
+      break;
     case 0x1B:
       switch(buf[i+1]){
-      case 0x20:
+      case ' ':
       case 0x26:
         j=i+3;
         break;
@@ -241,12 +259,47 @@ void consoleOutput(){
           n = 10*n+buf[j]-'0';
         }
         switch(buf[j]){
-        case 'C':
+        case 'A':
           getyx(consoleWin, y, x);
           if(n == 0) n=1;
-          wmove(consoleWin, y, x+n);
+          y-=n;
+          if(y < 0) y=0;
+          wmove(consoleWin, y, x);
           break;
-        case 'K':
+        case 'B':
+          getyx(consoleWin, y, x);
+          if(n == 0) n=1;
+          y+=n;
+          if(y >= consoleHeight){
+            wscrl(consoleWin, y-(consoleHeight-1));
+            y=consoleHeight-1;
+          }
+          wmove(consoleWin, y, x);
+          break;
+        case 'C': // 0x43
+          getyx(consoleWin, y, x);
+          if(n == 0) n=1;
+          x+=n;
+          y+=x/consoleWidth;
+          if(y >= consoleHeight){
+            wscrl(consoleWin, y-(consoleHeight-1));
+            y=consoleHeight-1;
+          }
+          x%=consoleWidth;
+          wmove(consoleWin, y, x);
+          break;
+        case 'D':
+          getyx(consoleWin, y, x);
+          if(n == 0) n=1;
+          x-=n;
+          x=-x;
+          y-=x/consoleWidth;
+          if(y < 0) y=0;
+          x%=consoleWidth;
+          if(x>0) x=consoleWidth-x;
+          wmove(consoleWin, y, x);
+          break;
+        case 'K': // 0x4B
           getyx(consoleWin, y, x);
           // leaveok(consoleWin, FALSE);
           switch(n){
@@ -307,16 +360,20 @@ void consoleOutput(){
         j=i+4;
       }
       /*
-      waddnstr(consoleWin, buf+i, j-i);
       waddnstr(commandWin, buf+i, j-i); // エスケープシーケンス表示
       overwrite(commandWin, stdscr);
       refresh( );
-
+      waddnstr(consoleWin, buf+i, j-i);
       if(write(STDOUT_FILENO, buf+i, j-i)<=0) break;
       fsync(STDOUT_FILENO);
       */
       // wprintw(consoleWin, "[%d]", j-i);
       // for(++i; i<j; ++i) waddch(consoleWin, buf[i]);
+      scrollok(commandWin, TRUE);
+      while(i<j) wprintw(commandWin, " %02X", buf[i++]);
+      overwrite(commandWin, stdscr);
+      touchwin(stdscr);
+      refresh( );
       i=j;
       break;
     case CTRL('G'):
@@ -324,11 +381,21 @@ void consoleOutput(){
       fsync(STDOUT_FILENO);
       ++i;
       break;
-    case CTRL('M'): // '\r'
+      /*
+    case CTRL('J'): // '\n'
+      getyx(consoleWin, y, x);
+      if(y<consoleHeight-1) wmove(consoleWin, y+1, x);
+      else wscrl(consoleWin, 1);
       ++i;
       break;
+    case CTRL('M'): // '\r'
+      getyx(consoleWin, y, x);
+      wmove(consoleWin, y, 0);
+      ++i;
+      break;
+      */
     default:
-      switch(buf[i]&0xF0){
+      switch(buf[i]&0xF0){ // UTF-8 多バイト文字
       case 0xC0:
       case 0xD0:
         j=i+2;
@@ -340,9 +407,35 @@ void consoleOutput(){
         j=i+4;
         break;
       default:
+        if(buf[i]<0x20 || buf[i]==0x7F){
+          scrollok(commandWin, TRUE);
+          wprintw(commandWin, " %02X", buf[i]);
+          overwrite(commandWin, stdscr);
+          touchwin(stdscr);
+          refresh( );
+        }
         j=i+1;
       }
-      waddnstr(consoleWin, buf+i, j-i);
+      getyx(consoleWin, y, x);
+      /*
+      if(buf[i]==0x08){
+        if(x==0){
+          x=consoleWidth-1;
+          --y;
+        }else --x;
+        wmove(consoleWin, y, x);
+        wdelch(consoleWin);
+      }else{
+        waddnstr(consoleWin, buf+i, j-i);
+        getyx(consoleWin, y2, x2);
+        if(x2>0 && y2-y==1)
+          wmove(consoleWin, y2, x2-1);
+      }
+      */
+        waddnstr(consoleWin, buf+i, j-i);
+        getyx(consoleWin, y2, x2);
+        if(x2>0 && y2-y==1)
+          wmove(consoleWin, y2, x2-1);
       i=j;
       // wprintw(consoleWin, "(%02x)", buf[i++]&0xFF);
     }
@@ -364,8 +457,8 @@ void calculateConsoleSize( ){
 
 #define TRACE STDERR_LOG
 void redrawCommand( ){
-  // int len;
-  int x, y;
+  int len;
+  // int x, y;
 
   TRACE;
   commandWidth = screenWidth;
@@ -382,13 +475,14 @@ void redrawCommand( ){
   waddstr(commandWin, menuItems[menuItemSelect].command);
 
   TRACE;
-  /*
-  write(masterFD, "\x01\0B", 2); // Ctrl+A Ctrl+K
+  write(masterFD, "\x01\x0B", 2); // Ctrl+A Ctrl+K
   len=strlen(menuItems[menuItemSelect].command);
   write(masterFD, menuItems[menuItemSelect].command, len);
   write(masterFD, "\x01", 1); // Ctrl+A
   fsync(masterFD);
-  */
+
+  /*
+  scrollok(consoleWin, FALSE);
   getyx(consoleWin, y, x);
   waddstr(consoleWin, menuItems[menuItemSelect].command);
   overwrite(consoleWin, stdscr);
@@ -396,6 +490,8 @@ void redrawCommand( ){
   refresh( );
   wmove(consoleWin, y, x);
   wclrtobot(consoleWin);
+  scrollok(consoleWin, TRUE);
+  */
 
   TRACE;
 }
@@ -671,7 +767,7 @@ int main(int argc, char *argv[ ]){
     fprintf(stderr, "Failed to create a command window.\n");
     exit(1);
   }
-  scrollok(commandWin, TRUE); // スクロールできるように設定する。
+  // scrollok(commandWin, TRUE); // スクロールできるように設定する。
   wbkgd(commandWin, COLOR_PAIR(1));
 
   TRACE;
@@ -736,13 +832,13 @@ int main(int argc, char *argv[ ]){
     close(slaveFD);
     // ioctl(STDIN_FILENO, TIOCSCTTY, 1);
     // setenv("PS1", "\r\n$ ", 1);
-    /*
+
     ws=ws0;
     ws.ws_col=consoleWidth;
     ws.ws_row=consoleHeight;
     if(ioctl(STDOUT_FILENO, TIOCSWINSZ, &ws)==-1) // ウィンドウサイズを設定する。
       perror("ioctl");
-    */
+
     execvp(argv2[0], argv2);
     perror("execvp");
     return errno;
