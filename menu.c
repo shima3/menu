@@ -870,7 +870,7 @@ int main(int argc, char *argv[ ]){
   }
   // parent
   pthread_create(&thread, NULL, (void*(*)(void*))consoleOutput, NULL);
-  sleep(1);
+  sleep(2);
 
   /* WINDOW *subwin(WINDOW *orig, int lines, int cols, int y, int x);
      lines行，cols列の新しいウィンドウを指定したウィンドウのy行，x列目に作成します．
