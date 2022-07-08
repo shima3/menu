@@ -75,12 +75,24 @@
 #include <errno.h>
 #include <pthread.h>
 #include <ctype.h>
+#include <stdarg.h>
 
 #define MENU_MAX_WIDTH 100
 /* defined in termios.h
   #define CTRL(CH) ((CH)&0x1F)
 */
+#define debug_printf(fmt, ...) debug_fprintFLf(stderr, __FILE__, __LINE__, fmt, __VA_ARGS__)
 #define STDERR_LOG fprintf(stderr, "%s %d: trace\n", __FILE__, __LINE__)
+
+void debug_fprintFLf(FILE *out, char file[ ], int line, char fmt[ ], ...){
+  va_list ap;
+  char buf[1024];
+
+  va_start(ap, fmt);
+  vsprintf(buf, fmt, ap);
+  va_end(ap);
+  fprintf(stderr, "%s %d: %s\n", file, line, buf);
+}
 
 typedef struct{
   char *title;
@@ -90,10 +102,8 @@ typedef struct{
 
 int screenWidth=0, screenHeight=0;
 WINDOW *menuPad, *menuWin=NULL, *consoleWin, *commandWin;
-// WINDOW *choiceWin;
 int consoleWidth=0, consoleHeight=0;
 int menuWidth=0, menuHeight=0, menuColumn;
-// int menuPadX=0, menuPadY=0;
 int commandWidth=0, commandHeight=1;
 MenuItem menuItems[ ]={
   {"T メニュー先頭", "", 'T'},
@@ -112,7 +122,6 @@ MenuItem menuItems[ ]={
   {NULL}
 };
 int menuItemNumber, menuItemWidth, menuItemSelect=0;
-// int choiceY=0;
 int childDie=FALSE;
 int masterFD, slaveFD;
 
@@ -137,8 +146,8 @@ void makeMenuPad(){
     waddstr(menuPad, menuItems[i].title);
   }
 
-  fprintf(stderr, "menuItemNumber=%d\n", menuItemNumber);
-  fprintf(stderr, "menuItemWidth=%d\n", menuItemWidth);
+  debug_printf("menuItemNumber=%d\n", menuItemNumber);
+  debug_printf("menuItemWidth=%d\n", menuItemWidth);
 }
 
 void calculateMenuSize( ){
