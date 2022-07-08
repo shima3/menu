@@ -3,7 +3,7 @@
 TARGETS=menu console
 
 all: $(TARGETS)
-	date > .git/commit.msg
+	LANG=C date > .git/commit.msg
 	git status --short --untracked-files=no >> .git/commit.msg
 	if [ -s .git/commit.msg ]; then git commit --all --file=.git/commit.msg --untracked-files=no --quiet; fi
 #	git commit -am "Successful compilation" -uno
