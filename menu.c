@@ -390,11 +390,13 @@ void consoleOutput(){
       */
       // wprintw(consoleWin, "[%d]", j-i);
       // for(++i; i<j; ++i) waddch(consoleWin, buf[i]);
+#ifdef DEBUG
       scrollok(commandWin, TRUE);
       while(i<j) wprintw(commandWin, " %02X", buf[i++]);
       overwrite(commandWin, stdscr);
       touchwin(stdscr);
       refresh( );
+#endif
       i=j;
       break;
     case CTRL('G'):
